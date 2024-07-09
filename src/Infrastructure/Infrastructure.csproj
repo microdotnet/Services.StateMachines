@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>MicroDotNet.Services.StateMachines.Infrastructure</AssemblyName>
+        <RootNamespace>MicroDotNet.Services.StateMachines.Infrastructure</RootNamespace>
+        <Company>MicroDotNet</Company>
+        <Product>MicroDotNet - StateMachines</Product>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Application\Application.csproj" />
+    </ItemGroup>
+
+</Project>

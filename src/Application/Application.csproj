@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <AssemblyName>MicroDotNet.Services.StateMachines.Application</AssemblyName>
+        <RootNamespace>MicroDotNet.Services.StateMachines.Application</RootNamespace>
+        <Company>MicroDotNet</Company>
+        <Product>MicroDotNet - StateMachines</Product>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
+</Project>
