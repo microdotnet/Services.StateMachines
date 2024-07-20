@@ -1,8 +1,8 @@
-﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints;
+﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1;
 
-using MicroDotNet.Services.StateMachines.WebApi.Endpoints.MachineDefinitions;
+using MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
-public static class MachineDefinitionsEndpoints
+public static class V1Endpoints
 {
     private static readonly Dictionary<Guid, MachineData> machines = [];
 
@@ -77,16 +77,22 @@ public static class MachineDefinitionsEndpoints
         return Results.Accepted(link, id);
     }
 
-    public static WebApplication MapMachineDefinitionsEndpoints(this WebApplication app)
+    public static WebApplication MapV1Endpoints(this WebApplication app)
     {
-        app.MapGet("/machineDefinitions/{code}/{version}", Get)
-            .WithName("GetMachineDefinition")
+        app.MapMachineDefinitionsEndpoints();
+        return app;
+    }
+
+    private static WebApplication MapMachineDefinitionsEndpoints(this WebApplication app)
+    {
+        app.MapGet("/v1/machineDefinitions/{code}/{version}", Get)
+            .WithName("V1_GetMachineDefinition")
             .WithOpenApi();
-        app.MapPost("/machineDefinitions", Post)
-            .WithName("CreateMachineDefinition")
+        app.MapPost("/v1/machineDefinitions", Post)
+            .WithName("V1_CreateMachineDefinition")
             .WithOpenApi();
-        app.MapPut("/machineDefinitions/{code}/{version}", Put)
-            .WithName("UpdateMachineDefinition")
+        app.MapPut("/v1/machineDefinitions/{code}/{version}", Put)
+            .WithName("V1_UpdateMachineDefinition")
             .WithOpenApi();
         return app;
     }
