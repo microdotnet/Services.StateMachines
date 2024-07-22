@@ -27,11 +27,9 @@ public static class V1Endpoints
 
     public static IResult Post(
         LinkGenerator linkGenerator,
-        string code,
-        short version,
         PostPayload payload)
     {
-        var machine = FindMachine(code, version);
+        var machine = FindMachine(payload.Code, payload.Version);
         if (machine is not null)
         {
             return Results.BadRequest();
@@ -40,14 +38,14 @@ public static class V1Endpoints
         var id = Guid.NewGuid();
         var definitionToStore = new MachineData(
             id,
-            code,
-            version,
+            payload.Code,
+            payload.Version,
             payload.Nodes,
             payload.Transitions);
         machines.Add(id, definitionToStore);
         var link = linkGenerator.GetPathByName(
-            "GetMachineDefinition",
-            values: new { code, version });
+            "V1_GetMachineDefinition",
+            values: new { code = payload.Code, version = payload.Version });
         return Results.Created(link, id);
     }
 
@@ -72,7 +70,7 @@ public static class V1Endpoints
             payload.Transitions);
         machines[id] = definitionToStore;
         var link = linkGenerator.GetPathByName(
-            "GetMachineDefinition",
+            "V1_GetMachineDefinition",
             values: new { code, version });
         return Results.Accepted(link, id);
     }
@@ -85,11 +83,11 @@ public static class V1Endpoints
 
     private static WebApplication MapMachineDefinitionsEndpoints(this WebApplication app)
     {
-        app.MapGet("/v1/machineDefinitions/{code}/{version}", Get)
-            .WithName("V1_GetMachineDefinition")
-            .WithOpenApi();
         app.MapPost("/v1/machineDefinitions", Post)
             .WithName("V1_CreateMachineDefinition")
+            .WithOpenApi();
+        app.MapGet("/v1/machineDefinitions/{code}/{version}", Get)
+            .WithName("V1_GetMachineDefinition")
             .WithOpenApi();
         app.MapPut("/v1/machineDefinitions/{code}/{version}", Put)
             .WithName("V1_UpdateMachineDefinition")

@@ -11,7 +11,7 @@ static IHostBuilder CreateHostBuilder(string[] args)
         .ConfigureServices((hostContext, services) =>
         {
             services.AddSingleton<IOutputWriter, ConsoleOutputWriter>();
-            services.AddTransient<ITestCase, MicroDotNet.Services.StateMachines.WebApi.TestClient.TestCases.V1.CreateMachineDefinition>();
+            services.AddTransient<ITestCase, MicroDotNet.Services.StateMachines.WebApi.TestClient.TestCases.V1.WhenMachineDefinitionIsCreatedThenSuccessIsReturned>();
             services.AddHostedService<TestsRunner>();
         });
 }

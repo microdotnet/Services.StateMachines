@@ -26,7 +26,8 @@ public sealed class TestsRunner : BackgroundService
         TestRunContextBase context = new StateMachinesTestRunContext(
             "https://localhost:7030");
         var resultFactory = new TestsResultFactory();
-
+        Console.WriteLine("Prepared to run tests. Press ENTER to execute tests");
+        Console.ReadLine();
         foreach (var testCase in this.testCases)
         {
             var testResult = await testCase.RunAsync(context, stoppingToken)
@@ -35,6 +36,7 @@ public sealed class TestsRunner : BackgroundService
         }
 
         var testRunResult = resultFactory.Create();
+        var currentColor = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("Test run finished");
         Console.WriteLine($"Tests run: {testRunResult.TestsRun}");
@@ -42,6 +44,9 @@ public sealed class TestsRunner : BackgroundService
         Console.WriteLine($"Tests succeeded: {testRunResult.Succeeded}");
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine($"Tests failed: {testRunResult.Failed}");
+        Console.ForegroundColor = currentColor;
+        Console.WriteLine("Press ENTER to exit");
+        Console.ReadLine();
         this.hostLifetime.StopApplication();
     }
 }
