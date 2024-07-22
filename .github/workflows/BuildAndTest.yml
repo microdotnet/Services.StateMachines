@@ -8,9 +8,6 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: [ '8.0.x' ]
 
     steps:
     - uses: actions/checkout@v4
@@ -18,7 +15,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+        dotnet-version: 8.0.x
 
     - name: Restore dependencies
       run: dotnet restore
@@ -27,12 +24,13 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Test
-      run: dotnet test --no-build --verbosity normal --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
 
-    - name: Upload dotnet test results
-      uses: actions/upload-artifact@v4
-      with:
-        name: dotnet-results-${{ matrix.dotnet-version }}
-        path: TestResults-${{ matrix.dotnet-version }}
-      # Use always() to always run this step to publish test results when there are test failures
+    - name: Publish test report
+      uses: dorny/test-reporter@v1
       if: always()
+      with:
+        name: DotNET Tests
+        path: "**/test-results.trx"                            
+        reporter: dotnet-trx
+        fail-on-error: true
