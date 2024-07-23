@@ -18,11 +18,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
 app.MapEndpoints();
 
 app.Run();
+
+
+// Make the implicit Program class public so test projects can access it
+public partial class WebApiProgram { }
