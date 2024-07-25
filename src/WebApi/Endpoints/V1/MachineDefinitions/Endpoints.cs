@@ -8,14 +8,12 @@ public static class Endpoints
 
     private const string UpdateMachineEndpointName = "V1_UpdateMachineDefinition";
 
-    private static readonly Dictionary<Guid, MachineData> machines = [];
-
     public static IResult Get(
         string code,
         short version,
         LinkGenerator linkGenerator)
     {
-        var machine = machines.Values.FirstOrDefault(d => d.MachineCode == code && d.MachineVersion == version);
+        var machine = FindMachine(code, version);
         if (machine is null)
         {
             return Results.NotFound();
@@ -41,13 +39,13 @@ public static class Endpoints
         }
 
         var id = Guid.NewGuid();
-        var definitionToStore = new MachineData(
+        var definitionToStore = new Db.MachineData(
             id,
             payload.Code,
             payload.Version,
             payload.Nodes,
             payload.Transitions);
-        machines.Add(id, definitionToStore);
+        Db.AddMachineDefinition(definitionToStore);
         var link = linkGenerator.GetPathByName(
             GetMachineEndpointName,
             values: new { code = payload.Code, version = payload.Version });
@@ -74,13 +72,13 @@ public static class Endpoints
         }
 
         var id = machine.Id;
-        var definitionToStore = new MachineData(
+        var definitionToStore = new Db.MachineData(
             id,
             code,
             version,
             payload.Nodes,
             payload.Transitions);
-        machines[id] = definitionToStore;
+        Db.UpdateMachineDefinition(definitionToStore);
         var link = linkGenerator.GetPathByName(
             GetMachineEndpointName,
             values: new { code, version });
@@ -106,26 +104,8 @@ public static class Endpoints
             .WithOpenApi();
     }
 
-    private static MachineData? FindMachine(string code, short version)
+    private static Db.MachineData? FindMachine(string code, short version)
     {
-        return machines.Values.FirstOrDefault(m => m.MachineCode == code && m.MachineVersion == version);
-    }
-
-    private class MachineData(
-        Guid id,
-        string machineCode,
-        short machineVersion,
-        MachineNode[] nodes,
-        NodeTransition[] transitions)
-    {
-        public Guid Id { get; } = id;
-
-        public string MachineCode { get; } = machineCode;
-
-        public short MachineVersion { get; } = machineVersion;
-
-        public MachineNode[] Nodes { get; } = nodes;
-
-        public NodeTransition[] Transitions { get; } = transitions;
+        return Db.GetMachineDefinition(code, version);
     }
 }
