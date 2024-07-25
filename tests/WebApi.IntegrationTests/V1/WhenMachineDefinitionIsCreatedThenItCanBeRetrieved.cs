@@ -4,7 +4,7 @@ using System.Threading;
 
 using MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
-public partial class TestClass
+public partial class Tests
 {
     [Fact]
     public async Task WhenMachineDefinitionIsCreatedThenItCanBeRetrieved()
@@ -23,7 +23,7 @@ public partial class TestClass
         var location = headerValues[0];
         var getMachineResponseMessage = await this.client.GetAsync(location);
         getMachineResponseMessage.IsSuccessStatusCode.Should().BeTrue("Expected successful retrieval");
-        var getMachineResponse = await DeserializeResponseContent<GetResult>(getMachineResponseMessage);
+        var getMachineResponse = await DeserializeResponseContent<MachineDefinition>(getMachineResponseMessage);
         getMachineResponse.Should().NotBeNull();
         getMachineResponse!.MachineCode.Should().Be(payload.Code);
         getMachineResponse.MachineVersion.Should().Be(payload.Version);

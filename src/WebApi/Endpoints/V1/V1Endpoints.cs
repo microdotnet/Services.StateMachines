@@ -1,5 +1,7 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1;
 
+using System;
+
 using MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
 public static class V1Endpoints
@@ -8,7 +10,8 @@ public static class V1Endpoints
 
     public static IResult Get(
         string code,
-        short version)
+        short version,
+        LinkGenerator linkGenerator)
     {
         var machine = machines.Values.FirstOrDefault(d => d.MachineCode == code && d.MachineVersion == version);
         if (machine is null)
@@ -16,7 +19,7 @@ public static class V1Endpoints
             return Results.NotFound();
         }
 
-        var result = new GetResult(
+        var result = new MachineDefinition(
             machine.Id,
             machine.MachineCode,
             machine.MachineVersion,
@@ -46,7 +49,14 @@ public static class V1Endpoints
         var link = linkGenerator.GetPathByName(
             "V1_GetMachineDefinition",
             values: new { code = payload.Code, version = payload.Version });
-        return Results.Created(link, id);
+
+        var result = new MachineDefinition(
+            id,
+            definitionToStore.MachineCode,
+            definitionToStore.MachineVersion,
+            definitionToStore.Nodes,
+            definitionToStore.Transitions);
+        return Results.Created(link, result);
     }
 
     public static IResult Put(
@@ -72,7 +82,13 @@ public static class V1Endpoints
         var link = linkGenerator.GetPathByName(
             "V1_GetMachineDefinition",
             values: new { code, version });
-        return Results.Accepted(link, id);
+        var result = new MachineDefinition(
+           definitionToStore.Id,
+           definitionToStore.MachineCode,
+           definitionToStore.MachineVersion,
+           definitionToStore.Nodes,
+           definitionToStore.Transitions);
+        return Results.Accepted(link, result);
     }
 
     public static WebApplication MapV1Endpoints(this WebApplication app)

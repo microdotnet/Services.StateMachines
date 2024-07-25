@@ -1,6 +1,6 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
-public record GetResult(
+public record MachineDefinition(
         Guid Id,
         string MachineCode,
         short MachineVersion,
