@@ -5,4 +5,5 @@ public record MachineDefinition(
         string MachineCode,
         short MachineVersion,
         MachineNode[] Nodes,
-        NodeTransition[] Transitions);
+        NodeTransition[] Transitions,
+        bool Confirmed);

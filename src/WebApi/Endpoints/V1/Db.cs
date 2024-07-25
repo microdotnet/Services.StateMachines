@@ -21,21 +21,62 @@ internal static class Db
         return machines.Values.FirstOrDefault(d => d.MachineCode == code && d.MachineVersion == version);
     }
 
-    public class MachineData(
-        Guid id,
-        string machineCode,
-        short machineVersion,
-        MachineNode[] nodes,
-        NodeTransition[] transitions)
+    public static void ConfirmMachine(Guid machineId)
     {
-        public Guid Id { get; } = id;
+        var machine = machines[machineId];
+        var confirmed = new MachineData(
+            machine.Id,
+            machine.MachineCode,
+            machine.MachineVersion,
+            machine.Nodes,
+            machine.Transitions,
+            true);
+        UpdateMachineDefinition(confirmed);
+    }
 
-        public string MachineCode { get; } = machineCode;
+    public class MachineData
+    {
+        public MachineData(
+            Guid id,
+            string machineCode,
+            short machineVersion,
+            MachineNode[] nodes,
+            NodeTransition[] transitions)
+        {
+            this.Id = id;
+            this.MachineCode = machineCode;
+            this.MachineVersion = machineVersion;
+            this.Nodes = nodes;
+            this.Transitions = transitions;
+            this.Confirmed = false;
+        }
 
-        public short MachineVersion { get; } = machineVersion;
+        public MachineData(
+            Guid id,
+            string machineCode,
+            short machineVersion,
+            MachineNode[] nodes,
+            NodeTransition[] transitions,
+            bool confirmed)
+        {
+            this.Id = id;
+            this.MachineCode = machineCode;
+            this.MachineVersion = machineVersion;
+            this.Nodes = nodes;
+            this.Transitions = transitions;
+            this.Confirmed = confirmed;
+        }
 
-        public MachineNode[] Nodes { get; } = nodes;
+        public Guid Id { get; }
 
-        public NodeTransition[] Transitions { get; } = transitions;
+        public string MachineCode { get; }
+
+        public short MachineVersion { get; }
+
+        public MachineNode[] Nodes { get; }
+
+        public NodeTransition[] Transitions { get; }
+
+        public bool Confirmed { get; }
     }
 }

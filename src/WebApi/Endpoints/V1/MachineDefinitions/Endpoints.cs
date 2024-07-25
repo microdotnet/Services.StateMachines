@@ -2,11 +2,11 @@
 
 public static class Endpoints
 {
-    public const string CreateMachineEndpointName = "V1_CreateMachineDefinition";
+    public const string CreateMachineEndpointName = "V1_MachineDefinitions_Create";
 
-    public const string GetMachineEndpointName = "V1_GetMachineDefinition";
+    public const string GetMachineEndpointName = "V1_MachineDefinitions_Get";
 
-    private const string UpdateMachineEndpointName = "V1_UpdateMachineDefinition";
+    private const string UpdateMachineEndpointName = "V1_MachineDefinitions_Update";
 
     public static IResult Get(
         string code,
@@ -24,7 +24,8 @@ public static class Endpoints
             machine.MachineCode,
             machine.MachineVersion,
             machine.Nodes,
-            machine.Transitions);
+            machine.Transitions,
+            machine.Confirmed);
         return Results.Ok(result);
     }
 
@@ -55,7 +56,8 @@ public static class Endpoints
             definitionToStore.MachineCode,
             definitionToStore.MachineVersion,
             definitionToStore.Nodes,
-            definitionToStore.Transitions);
+            definitionToStore.Transitions,
+            definitionToStore.Confirmed);
         return Results.Created(link, result);
     }
 
@@ -69,6 +71,11 @@ public static class Endpoints
         if (machine is null)
         {
             return Results.NotFound();
+        }
+
+        if (machine.Confirmed)
+        {
+            return Results.UnprocessableEntity();
         }
 
         var id = machine.Id;
@@ -87,7 +94,8 @@ public static class Endpoints
            definitionToStore.MachineCode,
            definitionToStore.MachineVersion,
            definitionToStore.Nodes,
-           definitionToStore.Transitions);
+           definitionToStore.Transitions,
+           definitionToStore.Confirmed);
         return Results.Accepted(link, result);
     }
 
