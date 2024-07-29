@@ -9,4 +9,37 @@
         <Product>MicroDotNet - StateMachines</Product>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Update="MachineNameResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>MachineNameResources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="MachineStructure\NodeResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>NodeResources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="MachineStructure\TransitionResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>TransitionResources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="MachineNameResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>MachineNameResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="MachineStructure\NodeResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>NodeResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="MachineStructure\TransitionResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>TransitionResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
