@@ -4,7 +4,7 @@ using FluentAssertions;
 
 using TestStack.BDDfy;
 
-public class CreateTests
+public sealed class CreateTests
 {
     private MachineName? instanceUnderTests;
 
@@ -21,6 +21,7 @@ public class CreateTests
             .And(t => t.VersionIs(123))
             .When(t => t.MachineNameIsCreated())
             .Then(t => t.ExceptionIsNotThrown())
+            .And(t => t.MachineNameIsNotNull())
             .And(t => t.CodePropertyIs(this.codeToSet!))
             .And(t => t.VersionPropertyIs(this.versionToSet))
             .BDDfy();
@@ -79,6 +80,12 @@ public class CreateTests
     {
         this.instanceUnderTests.Should()
             .BeNull();
+    }
+
+    private void MachineNameIsNotNull()
+    {
+        this.instanceUnderTests.Should()
+            .NotBeNull();
     }
 
     private void CodePropertyIs(string value)

@@ -1,6 +1,6 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
-public class PutPayload
+public sealed class PutPayload
 {
     public PutPayload(
         MachineNode[] nodes,

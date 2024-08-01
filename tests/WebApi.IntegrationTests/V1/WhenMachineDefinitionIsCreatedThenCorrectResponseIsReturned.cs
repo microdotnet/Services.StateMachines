@@ -2,7 +2,7 @@
 
 using System.Threading;
 
-public partial class Tests
+public sealed partial class Tests
 {
     [Fact]
     public async Task WhenMachineDefinitionIsCreatedThenCorrectResponseIsReturned()

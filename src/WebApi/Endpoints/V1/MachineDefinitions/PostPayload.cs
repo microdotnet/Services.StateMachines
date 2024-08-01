@@ -1,6 +1,6 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
-public class PostPayload
+public sealed class PostPayload
 {
     public PostPayload(
         string code,

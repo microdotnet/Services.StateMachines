@@ -34,7 +34,7 @@ internal static class Db
         UpdateMachineDefinition(confirmed);
     }
 
-    public class MachineData
+    public sealed class MachineData
     {
         public MachineData(
             Guid id,

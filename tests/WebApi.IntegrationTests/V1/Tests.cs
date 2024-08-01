@@ -4,7 +4,7 @@ using MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
-public partial class Tests : TestClassBase, IClassFixture<CustomWebApplicationFactory<WebApiProgram>>
+public sealed partial class Tests : TestClassBase, IClassFixture<CustomWebApplicationFactory<WebApiProgram>>
 {
     private readonly CustomWebApplicationFactory<WebApiProgram> customWebApplicationFactory;
 

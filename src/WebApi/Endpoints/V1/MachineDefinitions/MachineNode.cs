@@ -1,6 +1,6 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
-public class MachineNode
+public sealed class MachineNode
 {
     public MachineNode(
         string name)

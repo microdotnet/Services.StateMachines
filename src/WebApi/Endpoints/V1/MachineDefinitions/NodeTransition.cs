@@ -1,6 +1,6 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
-public class NodeTransition
+public sealed class NodeTransition
 {
     public NodeTransition(
         string sourceNode,
