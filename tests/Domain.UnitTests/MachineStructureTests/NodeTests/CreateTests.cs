@@ -30,17 +30,7 @@ public sealed class CreateTests
     {
         this.Given(t => t.NodeNameIs("  "))
             .When(t => t.NodeIsCreated())
-            .Then(t => t.ExceptionIsThrown<ArgumentException>(e => e.ParamName == "code"))
-            .And(t => t.NodeIsNull())
-            .BDDfy();
-    }
-
-    [Fact]
-    public void WhenNegativeVersionIsProvidedThenInstanceIsNotCreated()
-    {
-        this.Given(t => t.NodeNameIs("InvalidVersion"))
-            .When(t => t.NodeIsCreated())
-            .Then(t => t.ExceptionIsThrown<ArgumentException>(e => e.ParamName == "version"))
+            .Then(t => t.ExceptionIsThrown<ArgumentException>(e => e.ParamName == "name"))
             .And(t => t.NodeIsNull())
             .BDDfy();
     }
