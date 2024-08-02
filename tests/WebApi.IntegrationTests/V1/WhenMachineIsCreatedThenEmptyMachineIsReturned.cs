@@ -1,13 +1,13 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.IntegrationTests.V1;
 
-using System.Threading;
+using MachineDefinitions = MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
-public sealed partial class Tests
+partial class Tests
 {
     [Fact]
-    public async Task WhenMachineDefinitionIsCreatedThenCorrectResponseIsReturned()
+    public async Task WhenMachineIsCreatedThenEmptyMachineIsReturned()
     {
-        var payload = CreateMachineDefinitionCreationPayload();
+        var payload = CreateMachineCreationPayload();
         var createMachineRequest = new HttpRequestMessage(
            HttpMethod.Post,
            "/v1/machineDefinitions");
@@ -23,5 +23,13 @@ public sealed partial class Tests
         headerValues.Should().HaveCount(1);
         var location = headerValues[0];
         location.Should().Contain(payload.Code);
+    }
+        
+    private static MachineDefinitions.CreateInput CreateMachineCreationPayload()
+    {
+        return new MachineDefinitions.CreateInput(
+            faker.Commerce.Product(),
+            faker.Commerce.ProductName(),
+            faker.Commerce.ProductDescription());
     }
 }

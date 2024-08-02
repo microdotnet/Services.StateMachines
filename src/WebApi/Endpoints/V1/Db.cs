@@ -1,82 +1,57 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1;
 
-using MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
+using System.Collections.ObjectModel;
 
 internal static class Db
 {
-    private static readonly Dictionary<Guid, MachineData> machines = [];
+    private static readonly Collection<Machine> machines = [];
 
-    public static void AddMachineDefinition(MachineData machine)
+    public static void AddMachineDefinition(Machine machine)
     {
-        machines.Add(machine.Id, machine);
+        if (machines.Any(m => m.Code == machine.Code))
+        {
+            throw new InvalidOperationException();
+        }
+
+        machines.Add(machine);
     }
 
-    public static void UpdateMachineDefinition(MachineData machine)
+    public static Machine? GetMachineDefinition(string code)
     {
-        machines[machine.Id] = machine;
+        return machines.FirstOrDefault(
+            m => m.Code == code);
     }
 
-    public static MachineData? GetMachineDefinition(string code, short version)
+    public static void UpdateMachineDefinition(Machine machine)
     {
-        return machines.Values.FirstOrDefault(d => d.MachineCode == code && d.MachineVersion == version);
+        var existing = machines.First(x => x.Id == machine.Id);
+        var index = machines.IndexOf(existing);
+        machines[index] = machine;
     }
 
     public static void ConfirmMachine(Guid machineId)
     {
-        var machine = machines[machineId];
-        var confirmed = new MachineData(
-            machine.Id,
-            machine.MachineCode,
-            machine.MachineVersion,
-            machine.Nodes,
-            machine.Transitions,
-            true);
-        UpdateMachineDefinition(confirmed);
+        var machine = machines.First(m => m.Id == machineId);
+        machine.Confirmed = true;
     }
 
-    public sealed class MachineData
+    internal sealed class Machine
     {
-        public MachineData(
-            Guid id,
-            string machineCode,
-            short machineVersion,
-            MachineNode[] nodes,
-            NodeTransition[] transitions)
-        {
-            this.Id = id;
-            this.MachineCode = machineCode;
-            this.MachineVersion = machineVersion;
-            this.Nodes = nodes;
-            this.Transitions = transitions;
-            this.Confirmed = false;
-        }
+        public Guid Id { get; set; }
 
-        public MachineData(
-            Guid id,
-            string machineCode,
-            short machineVersion,
-            MachineNode[] nodes,
-            NodeTransition[] transitions,
-            bool confirmed)
-        {
-            this.Id = id;
-            this.MachineCode = machineCode;
-            this.MachineVersion = machineVersion;
-            this.Nodes = nodes;
-            this.Transitions = transitions;
-            this.Confirmed = confirmed;
-        }
+        public string Code { get; set; } = string.Empty;
 
-        public Guid Id { get; }
+        public string Name { get; set; } = string.Empty;
 
-        public string MachineCode { get; }
+        public string Description { get; set; } = string.Empty;
 
-        public short MachineVersion { get; }
+        public bool Confirmed { get; set; }
 
-        public MachineNode[] Nodes { get; }
+        public Collection<MachineVersion> Versions { get; } = [];
+    }
 
-        public NodeTransition[] Transitions { get; }
-
-        public bool Confirmed { get; }
+    internal sealed class MachineVersion
+    {
+        public short Number { get; set; }
     }
 }
