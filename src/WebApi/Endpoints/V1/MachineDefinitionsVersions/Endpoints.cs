@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 public static class Endpoints
 {
-    public const string CreateMachineVersionEndpointName = "V1_MachineDefinitionsVersions_Create";
+    public const string CreateMachineVersionEndpointName = "V1_MachineDefinitions_Versions_Create";
 
-    public const string GetMachineVersionEndpointName = "V1_MachineDefinitionsVersions_Get";
+    public const string GetMachineVersionEndpointName = "V1_MachineDefinitions_Versions_Get";
 
     public static IResult Create(
         LinkGenerator linkGenerator,
