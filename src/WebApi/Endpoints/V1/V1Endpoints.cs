@@ -7,6 +7,7 @@ public static class V1Endpoints1
         MachineDefinitions.Endpoints.MapEndpoints(app);
         MachineDefinitionsVersions.Endpoints.MapEndpoints(app);
         MachineDefinitionsVersionsNodes.Endpoints.MapEndpoints(app);
+        MachineDefinitionsVersionsTransitions.Endpoints.MapEndpoints(app);
         return app;
     }
 }
