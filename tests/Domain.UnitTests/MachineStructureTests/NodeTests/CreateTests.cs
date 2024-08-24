@@ -1,4 +1,4 @@
-﻿namespace MicroDotNet.Services.StateMachines.Domain.UnitTests.NodeTests;
+﻿namespace MicroDotNet.Services.StateMachines.Domain.UnitTests.MachineStructureTests.NodeTests;
 
 using FluentAssertions;
 

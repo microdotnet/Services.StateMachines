@@ -117,10 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Create_FromNodeNull" xml:space="preserve">
-    <value>Start node cannot be null.</value>
+  <data name="Create_SourceNodeNull" xml:space="preserve">
+    <value>Source node cannot be null.</value>
   </data>
-  <data name="Create_ToNodeNull" xml:space="preserve">
+  <data name="Create_TargetNodeNull" xml:space="preserve">
     <value>Target node cannot be null.</value>
+  </data>
+  <data name="Create_TriggerEmpty" xml:space="preserve">
+    <value>Trigger name cannot be empty.</value>
   </data>
 </root>

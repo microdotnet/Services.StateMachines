@@ -6,33 +6,43 @@
     [DebuggerDisplay("Transition from '{From}' to '{To}'")]
     public sealed class Transition
     {
-        private Transition(Node from, Node to)
+        private Transition(Node source, Node target, string trigger)
         {
-            this.From = from;
-            this.To = to;
+            this.Source = source;
+            this.Target = target;
+            this.Trigger = trigger;
         }
 
-        public Node From { get; }
+        public Node Source { get; }
 
-        public Node To { get; }
+        public Node Target { get; }
 
-        public static Transition Create(Node from, Node to)
+        public string Trigger { get; }
+
+        public static Transition Create(Node source, Node target, string trigger)
         {
-            if (from is null)
+            if (source is null || string.IsNullOrWhiteSpace(source.Name))
             {
                 throw new ArgumentNullException(
-                    nameof(from),
-                    TransitionResources.Create_FromNodeNull);
+                    nameof(source),
+                    TransitionResources.Create_SourceNodeNull);
             }
 
-            if (to is null)
+            if (target is null || string.IsNullOrWhiteSpace(target.Name))
             {
                 throw new ArgumentNullException(
-                    nameof(to),
-                    TransitionResources.Create_ToNodeNull);
+                    nameof(target),
+                    TransitionResources.Create_TargetNodeNull);
             }
 
-            return new Transition(from, to);
+            if (string.IsNullOrWhiteSpace(trigger))
+            {
+                throw new ArgumentNullException(
+                    nameof(trigger),
+                    TransitionResources.Create_TriggerEmpty);
+            }
+
+            return new Transition(source, target, trigger);
         }
     }
 }

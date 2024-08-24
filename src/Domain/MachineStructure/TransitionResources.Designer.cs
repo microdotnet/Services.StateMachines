@@ -61,20 +61,29 @@ namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start node cannot be null..
+        ///   Looks up a localized string similar to Source node cannot be null..
         /// </summary>
-        internal static string Create_FromNodeNull {
+        internal static string Create_SourceNodeNull {
             get {
-                return ResourceManager.GetString("Create_FromNodeNull", resourceCulture);
+                return ResourceManager.GetString("Create_SourceNodeNull", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Target node cannot be null..
         /// </summary>
-        internal static string Create_ToNodeNull {
+        internal static string Create_TargetNodeNull {
             get {
-                return ResourceManager.GetString("Create_ToNodeNull", resourceCulture);
+                return ResourceManager.GetString("Create_TargetNodeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger name cannot be empty..
+        /// </summary>
+        internal static string Create_TriggerEmpty {
+            get {
+                return ResourceManager.GetString("Create_TriggerEmpty", resourceCulture);
             }
         }
     }
