@@ -15,6 +15,11 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>MachineNameResources.resx</DependentUpon>
       </Compile>
+      <Compile Update="MachineStructure\MachineDefinitionAggregateRootResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>MachineDefinitionAggregateRootResources.resx</DependentUpon>
+      </Compile>
       <Compile Update="MachineStructure\NodeResources.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -31,6 +36,10 @@
       <EmbeddedResource Update="MachineNameResources.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>MachineNameResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="MachineStructure\MachineDefinitionAggregateRootResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>MachineDefinitionAggregateRootResources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
       <EmbeddedResource Update="MachineStructure\NodeResources.resx">
         <Generator>ResXFileCodeGenerator</Generator>
