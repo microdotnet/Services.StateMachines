@@ -3,7 +3,7 @@
     using System;
     using System.Diagnostics;
 
-    [DebuggerDisplay("Transition from '{From}' to '{To}'")]
+    [DebuggerDisplay("Transition from '{Source}' to '{Target}'")]
     public sealed class Transition
     {
         private Transition(Node source, Node target, string trigger)

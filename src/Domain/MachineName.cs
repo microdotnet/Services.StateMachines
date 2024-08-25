@@ -1,7 +1,9 @@
 ﻿namespace MicroDotNet.Services.StateMachines.Domain
 {
     using System;
+    using System.Diagnostics;
 
+    [DebuggerDisplay("{Code} - V{Version}")]
     public sealed class MachineName
     {
         private MachineName(string code, short version)
