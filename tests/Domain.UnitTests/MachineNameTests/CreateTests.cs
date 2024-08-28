@@ -15,7 +15,7 @@ public sealed class CreateTests
     private Action? instanceCreation;
 
     [Fact]
-    public void WhenCorrectParametersArePassedThenInstanceIsCrated()
+    public void WhenCorrectParametersArePassedThenInstanceIsCreated()
     {
         this.Given(t => t.CodeIs("ValidMachine"))
             .And(t => t.VersionIs(123))

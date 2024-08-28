@@ -133,4 +133,8 @@
     <value>Transition already exists between nodes '{0}' and '{1}' for trigger '{2}'.</value>
     <comment>Transition already exists between nodes '{0}' and '{1}' for trigger '{2}'.</comment>
   </data>
+  <data name="NodesToAddEmpty" xml:space="preserve">
+    <value>Nodes to be added array is empty</value>
+    <comment>Nodes to be added array is empty</comment>
+  </data>
 </root>

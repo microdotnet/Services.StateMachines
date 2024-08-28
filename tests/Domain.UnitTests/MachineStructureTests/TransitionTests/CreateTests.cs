@@ -19,7 +19,7 @@ public sealed class CreateTests
     private Action? instanceCreation;
 
     [Fact]
-    public void WhenCorrectParametersArePassedThenInstanceIsCrated()
+    public void WhenCorrectParametersArePassedThenInstanceIsCreated()
     {
         this.Given(t => t.SourceIs("SOURCE"))
             .And(t => t.TargetNodeIs("TARGET"))

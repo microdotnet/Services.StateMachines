@@ -62,6 +62,15 @@ namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nodes to be added array is empty.
+        /// </summary>
+        internal static string NodesToAddEmpty {
+            get {
+                return ResourceManager.GetString("NodesToAddEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Source node &apos;{0}&apos; does not exist..
         /// </summary>
         internal static string SourceNodeDoesNotExist {

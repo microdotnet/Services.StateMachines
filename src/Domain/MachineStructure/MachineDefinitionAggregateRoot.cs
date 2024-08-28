@@ -32,14 +32,21 @@
             return new MachineDefinitionAggregateRoot(machineName);
         }
 
-        public void AddNode(Node node)
+        public void AddNodes(Node[] nodes)
         {
-            if (node is null)
+            if (nodes is null)
             {
-                throw new ArgumentNullException(nameof(node));
+                throw new ArgumentNullException(nameof(nodes));
             }
 
-            var @event = MachineNodeAdded.Create(node);
+            if (nodes.Length == 0)
+            {
+                throw new ArgumentException(
+                    MachineDefinitionAggregateRootResources.NodesToAddEmpty,
+                    nameof(nodes));
+            }
+
+            var @event = MachineNodesAdded.Create(nodes);
             this.Enqueue(@event);
             this.Apply(@event);
         }
@@ -102,8 +109,8 @@
                 case MachineDefinitionCreated created:
                     this.Apply(created);
                     break;
-                case MachineNodeAdded nodeAdded:
-                    this.Apply(nodeAdded);
+                case MachineNodesAdded nodesAdded:
+                    this.Apply(nodesAdded);
                     break;
                 case TransitionAdded transitionAdded:
                     this.Apply(transitionAdded);
@@ -118,9 +125,12 @@
             this.MachineName = @event.MachineName;
         }
 
-        private void Apply(MachineNodeAdded @event)
+        private void Apply(MachineNodesAdded @event)
         {
-            this.nodes.Add(@event.Node);
+            foreach (var node in @event.Nodes)
+            {
+                this.nodes.Add(node);
+            }
         }
 
         private void Apply(TransitionAdded @event)
