@@ -64,45 +64,45 @@ namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure {
         /// <summary>
         ///   Looks up a localized string similar to Nodes to be added array is empty.
         /// </summary>
-        internal static string NodesToAddEmpty {
+        internal static string AddNodes_NodesToAddEmpty {
             get {
-                return ResourceManager.GetString("NodesToAddEmpty", resourceCulture);
+                return ResourceManager.GetString("AddNodes_NodesToAddEmpty", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Source node &apos;{0}&apos; does not exist..
         /// </summary>
-        internal static string SourceNodeDoesNotExist {
+        internal static string AddTransition_SourceNodeDoesNotExist {
             get {
-                return ResourceManager.GetString("SourceNodeDoesNotExist", resourceCulture);
+                return ResourceManager.GetString("AddTransition_SourceNodeDoesNotExist", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Target node &apos;{0}&apos; does not exist..
         /// </summary>
-        internal static string TargetNodeDoesNotExist {
+        internal static string AddTransition_TargetNodeDoesNotExist {
             get {
-                return ResourceManager.GetString("TargetNodeDoesNotExist", resourceCulture);
+                return ResourceManager.GetString("AddTransition_TargetNodeDoesNotExist", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Transition already exists between nodes &apos;{0}&apos; and &apos;{1}&apos; for trigger &apos;{2}&apos;..
         /// </summary>
-        internal static string TransitionAlreadyExists {
+        internal static string AddTransition_TransitionAlreadyExists {
             get {
-                return ResourceManager.GetString("TransitionAlreadyExists", resourceCulture);
+                return ResourceManager.GetString("AddTransition_TransitionAlreadyExists", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Trigger must not be empty..
         /// </summary>
-        internal static string TriggerMustNotBeEmpty {
+        internal static string AddTransition_TriggerMustNotBeEmpty {
             get {
-                return ResourceManager.GetString("TriggerMustNotBeEmpty", resourceCulture);
+                return ResourceManager.GetString("AddTransition_TriggerMustNotBeEmpty", resourceCulture);
             }
         }
     }

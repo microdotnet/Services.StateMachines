@@ -117,23 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="TriggerMustNotBeEmpty" xml:space="preserve">
+  <data name="AddTransition_TriggerMustNotBeEmpty" xml:space="preserve">
     <value>Trigger must not be empty.</value>
     <comment>Trigger must not be empty.</comment>
   </data>
-  <data name="SourceNodeDoesNotExist" xml:space="preserve">
+  <data name="AddTransition_SourceNodeDoesNotExist" xml:space="preserve">
     <value>Source node '{0}' does not exist.</value>
     <comment>Source node '{0}' does not exist.</comment>
   </data>
-  <data name="TargetNodeDoesNotExist" xml:space="preserve">
+  <data name="AddTransition_TargetNodeDoesNotExist" xml:space="preserve">
     <value>Target node '{0}' does not exist.</value>
     <comment>Target node '{0}' does not exist.</comment>
   </data>
-  <data name="TransitionAlreadyExists" xml:space="preserve">
+  <data name="AddTransition_TransitionAlreadyExists" xml:space="preserve">
     <value>Transition already exists between nodes '{0}' and '{1}' for trigger '{2}'.</value>
     <comment>Transition already exists between nodes '{0}' and '{1}' for trigger '{2}'.</comment>
   </data>
-  <data name="NodesToAddEmpty" xml:space="preserve">
+  <data name="AddNodes_NodesToAddEmpty" xml:space="preserve">
     <value>Nodes to be added array is empty</value>
     <comment>Nodes to be added array is empty</comment>
   </data>

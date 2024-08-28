@@ -42,7 +42,7 @@
             if (nodes.Length == 0)
             {
                 throw new ArgumentException(
-                    MachineDefinitionAggregateRootResources.NodesToAddEmpty,
+                    MachineDefinitionAggregateRootResources.AddNodes_NodesToAddEmpty,
                     nameof(nodes));
             }
 
@@ -68,14 +68,14 @@
 
             if (string.IsNullOrEmpty(trigger))
             {
-                throw new ArgumentException(MachineDefinitionAggregateRootResources.TriggerMustNotBeEmpty, nameof(trigger));
+                throw new ArgumentException(MachineDefinitionAggregateRootResources.AddTransition_TriggerMustNotBeEmpty, nameof(trigger));
             }
 
             if (!this.nodes.Any(n => n.Name == source.Name))
             {
                 throw new InvalidOperationException(
                     string.Format(
-                        MachineDefinitionAggregateRootResources.SourceNodeDoesNotExist,
+                        MachineDefinitionAggregateRootResources.AddTransition_SourceNodeDoesNotExist,
                         source.Name));
             }
 
@@ -83,7 +83,7 @@
             {
                 throw new InvalidOperationException(
                     string.Format(
-                        MachineDefinitionAggregateRootResources.TargetNodeDoesNotExist,
+                        MachineDefinitionAggregateRootResources.AddTransition_TargetNodeDoesNotExist,
                         target.Name));
             }
 
@@ -91,7 +91,7 @@
             {
                 throw new InvalidOperationException(
                     string.Format(
-                        MachineDefinitionAggregateRootResources.TransitionAlreadyExists,
+                        MachineDefinitionAggregateRootResources.AddTransition_TransitionAlreadyExists,
                         source.Name,
                         target.Name,
                         trigger));
