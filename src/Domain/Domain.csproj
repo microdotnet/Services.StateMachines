@@ -25,6 +25,11 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>NodeResources.resx</DependentUpon>
       </Compile>
+      <Compile Update="MachineStructure\StatusResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>StatusResources.resx</DependentUpon>
+      </Compile>
       <Compile Update="MachineStructure\TransitionResources.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -44,6 +49,10 @@
       <EmbeddedResource Update="MachineStructure\NodeResources.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>NodeResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="MachineStructure\StatusResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>StatusResources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
       <EmbeddedResource Update="MachineStructure\TransitionResources.resx">
         <Generator>ResXFileCodeGenerator</Generator>
