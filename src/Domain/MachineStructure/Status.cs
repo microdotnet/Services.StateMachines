@@ -30,7 +30,7 @@
 
         public static Status Parse(string code)
         {
-            if (string.IsNullOrEmpty(code))
+            if (string.IsNullOrWhiteSpace(code))
             {
                 throw new ArgumentException(
                     StatusResources.Parse_CodeEmpty,
