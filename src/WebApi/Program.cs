@@ -1,27 +1,17 @@
-using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
+using MicroDotNet.Services.StateMachines.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Host.SetupLogging();
+builder.Host.BuildConfiguration();
+builder.Host.SetupContainer(builder.Configuration);
+
+builder.Services.ConfigureServices(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.MapEndpoints();
+app.ConfigureApplication();
 
 app.Run();
 
-
-// Make the implicit Program class public so test projects can access it
 public sealed partial class WebApiProgram { }

@@ -1,0 +1,38 @@
+name: local_microdotnet_statemachines
+
+services:
+    local.microdotnet.services.statemachines.eventstore:
+        container_name: local.microdotnet.services.statemachines.eventstore
+        hostname: local.microdotnet.services.statemachines.eventstore
+        image: eventstore/eventstore:22.10.0-buster-slim
+        restart: always
+        networks:
+            - local.microdotnet.services.statemachines
+        environment:
+            - EVENTSTORE_CLUSTER_SIZE=1
+            - EVENTSTORE_RUN_PROJECTIONS=All
+            - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+            - EVENTSTORE_INSECURE=true
+            - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+            - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+            - EVENTSTORE_HTTP_PORT=2113
+            - EVENTSTORE_ADVERTISE_TCP_PORT_TO_CLIENT_AS=10001
+            - EVENTSTORE_ADVERTISE_HTTP_PORT_TO_CLIENT_AS=10002
+        ports:
+            - "10001:1113"
+            - "10002:2113"
+        volumes:
+            - type: volume
+              source: eventstore-data
+              target: /var/lib/eventstore
+            - type: volume
+              source: eventstore-logs
+              target: /var/log/eventstore
+
+networks:
+    local.microdotnet.services.statemachines:
+        driver: bridge
+
+volumes:
+    eventstore-data:
+    eventstore-logs:
