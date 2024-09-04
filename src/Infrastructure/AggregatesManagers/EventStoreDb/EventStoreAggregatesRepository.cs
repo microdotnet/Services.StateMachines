@@ -34,11 +34,11 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
     {
         get
         {
-            var client = this.eventStoreClientProvider.Create("WriteDB");
+            var client = this.eventStoreClientProvider.Create("EventsDB");
             if (client is null)
             {
                 throw new InvalidOperationException(
-                    $"Client with name 'WriteDB' not registered");
+                    $"Client with name 'EventsDB' not registered");
             }
 
             return client;
@@ -46,7 +46,7 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
     }
 
     /// <inheritdoc/>
-    public async Task<ulong> Add(TAggregate aggregate, CancellationToken cancellationToken)
+    public async Task<ulong> AddAsync(TAggregate aggregate, CancellationToken cancellationToken)
     {
         var result = await this.Client.AppendToStreamAsync(
             StreamNameMapper.ToStreamId<TAggregate>(aggregate.Id),
@@ -59,9 +59,9 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
     }
 
     /// <inheritdoc/>
-    public Task<ulong> Delete(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken)
+    public Task<ulong> DeleteAsync(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken)
     {
-        return this.Update(aggregate, expectedRevision, cancellationToken);
+        return this.UpdateAsync(aggregate, expectedRevision, cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -75,7 +75,7 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
     }
 
     /// <inheritdoc/>
-    public async Task<ulong> Update(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken)
+    public async Task<ulong> UpdateAsync(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken)
     {
         var eventsToAppend = GetEventsToStore(aggregate);
         var nextVersion = expectedRevision ?? aggregate.Version - (ulong)eventsToAppend.Count;

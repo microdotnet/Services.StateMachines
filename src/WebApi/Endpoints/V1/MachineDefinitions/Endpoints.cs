@@ -1,29 +1,43 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
+using MicroDotNet.Services.StateMachines.Application.AggregatesManager;
+using MicroDotNet.Services.StateMachines.Domain;
+using MicroDotNet.Services.StateMachines.Domain.MachineDetails;
+using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
+
 public static class Endpoints
 {
     public const string CreateMachineEndpointName = "V1_MachineDefinitions_Create";
 
     public const string GetMachineEndpointName = "V1_MachineDefinitions_Get";
 
-    public static IResult Create(
+    public static async Task<IResult> Create(
         LinkGenerator linkGenerator,
+        IAggregatesRepository<MachineDetailsAggregateRoot> aggregatesRepository,
         CreateInput payload)
     {
-        var machine = new Db.Machine
-        {
-            Id = Guid.NewGuid(),
-            Code = payload.Code,
-            Name = payload.Name,
-            Description = payload.Description,
-            Confirmed = false,
-        };
-        Db.AddMachineDefinition(machine);
+        var id = Guid.NewGuid();
+        var machineAggregate = MachineDetailsAggregateRoot.Create(
+            id,
+            payload.Code,
+            payload.Name,
+            payload.Description);
+        await aggregatesRepository.AddAsync(machineAggregate, CancellationToken.None)
+            .ConfigureAwait(false);
+        ////var machine = new Db.Machine
+        ////{
+        ////    Id = Guid.NewGuid(),
+        ////    Code = payload.Code,
+        ////    Name = payload.Name,
+        ////    Description = payload.Description,
+        ////    Confirmed = false,
+        ////};
+        ////Db.AddMachineDefinition(machine);
 
         var link = linkGenerator.GetPathByName(
             GetMachineEndpointName,
             values: new { code = payload.Code });
-        var output = new CreateOutput(machine.Id);
+        var output = new CreateOutput(id);
         return Results.Created(link, output);
     }
 

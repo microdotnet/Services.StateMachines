@@ -10,6 +10,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Update="MachineDetails\MachineDetailsAggregateRootResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>MachineDetailsAggregateRootResources.resx</DependentUpon>
+      </Compile>
       <Compile Update="MachineNameResources.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -38,6 +43,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Update="MachineDetails\MachineDetailsAggregateRootResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>MachineDetailsAggregateRootResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
       <EmbeddedResource Update="MachineNameResources.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>MachineNameResources.Designer.cs</LastGenOutput>

@@ -11,10 +11,10 @@
     {
         Task<TAggregate?> Find(Guid id, CancellationToken cancellationToken);
 
-        Task<ulong> Add(TAggregate aggregate, CancellationToken cancellationToken);
+        Task<ulong> AddAsync(TAggregate aggregate, CancellationToken cancellationToken);
 
-        Task<ulong> Update(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken);
+        Task<ulong> UpdateAsync(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken);
 
-        Task<ulong> Delete(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken);
+        Task<ulong> DeleteAsync(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken);
     }
 }
