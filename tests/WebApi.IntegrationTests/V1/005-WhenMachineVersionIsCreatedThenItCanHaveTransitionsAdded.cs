@@ -5,7 +5,7 @@ using MachineVersionTransitions = MicroDotNet.Services.StateMachines.WebApi.Endp
 partial class Tests
 {
     [Fact]
-    public async Task WhenMachineVersionIsCreatedThenItCanHaveTransitionsAdded()
+    public async Task TC005_WhenMachineVersionIsCreatedThenItCanHaveTransitionsAdded()
     {
         var createMachinePayload = CreateMachineCreationPayload();
         var createMachineRequest = new HttpRequestMessage(

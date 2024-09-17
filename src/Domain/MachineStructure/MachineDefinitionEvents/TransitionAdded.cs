@@ -18,16 +18,5 @@
         public Node Target { get; }
 
         public string Trigger { get; }
-
-        public static TransitionAdded Create(
-            Node source,
-            Node target,
-            string trigger)
-        {
-            return new TransitionAdded(
-                source,
-                target,
-                trigger);
-        }
     }
 }

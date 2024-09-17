@@ -5,7 +5,7 @@ using MachineDefinitions = MicroDotNet.Services.StateMachines.WebApi.Endpoints.V
 partial class Tests
 {
     [Fact]
-    public async Task WhenMachineIsCreatedThenEmptyMachineIsReturned()
+    public async Task TC001_WhenMachineIsCreatedThenEmptyMachineIsReturned()
     {
         var payload = CreateMachineCreationPayload();
         var createMachineRequest = new HttpRequestMessage(

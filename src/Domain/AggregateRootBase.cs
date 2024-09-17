@@ -15,6 +15,8 @@
 
         public Guid Id { get; protected set; }
 
+        public abstract string PublicIdentifier { get; }
+
         public ulong Version => this.version ?? 0;
 
         public IEnumerable<object> DequeueUncommittedEvents()

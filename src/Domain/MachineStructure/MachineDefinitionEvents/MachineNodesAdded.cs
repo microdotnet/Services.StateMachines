@@ -2,16 +2,11 @@
 {
     public sealed class MachineNodesAdded
     {
-        private MachineNodesAdded(Node[] nodes)
+        public MachineNodesAdded(Node[] nodes)
         {
             this.Nodes = nodes;
         }
 
         public Node[] Nodes { get; }
-
-        public static MachineNodesAdded Create(Node[] nodes)
-        {
-            return new MachineNodesAdded(nodes);
-        }
     }
 }

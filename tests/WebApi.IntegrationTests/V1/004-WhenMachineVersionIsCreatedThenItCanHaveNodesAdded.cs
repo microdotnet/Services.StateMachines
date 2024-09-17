@@ -5,7 +5,7 @@ using MachineVersionNodes = MicroDotNet.Services.StateMachines.WebApi.Endpoints.
 partial class Tests
 {
     [Fact]
-    public async Task WhenMachineVersionIsCreatedThenItCanHaveNodesAdded()
+    public async Task TC004_WhenMachineVersionIsCreatedThenItCanHaveNodesAdded()
     {
         var createMachinePayload = CreateMachineCreationPayload();
         var createMachineRequest = new HttpRequestMessage(

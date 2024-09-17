@@ -7,14 +7,14 @@ public static class EventStoreExtensions
 {
     public static async Task<TAggregate?> AggregateStream<TAggregate>(
         this EventStoreClient eventStore,
-        Guid id,
+        string publicIdentifier,
         ulong? fromVersion,
         CancellationToken cancellationToken)
         where TAggregate : class, IProjection
     {
         var readResult = eventStore.ReadStreamAsync(
             Direction.Forwards,
-            StreamNameMapper.ToStreamId<TAggregate>(id),
+            StreamNameMapper.ToStreamId<TAggregate>(publicIdentifier),
             fromVersion ?? StreamPosition.Start,
             cancellationToken: cancellationToken);
 

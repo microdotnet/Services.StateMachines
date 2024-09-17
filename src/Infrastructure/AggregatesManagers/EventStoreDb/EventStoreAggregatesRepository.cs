@@ -49,7 +49,7 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
     public async Task<ulong> AddAsync(TAggregate aggregate, CancellationToken cancellationToken)
     {
         var result = await this.Client.AppendToStreamAsync(
-            StreamNameMapper.ToStreamId<TAggregate>(aggregate.Id),
+            StreamNameMapper.ToStreamId<TAggregate>(aggregate.PublicIdentifier),
             StreamState.NoStream,
             GetEventsToStore(aggregate),
             cancellationToken: cancellationToken)
@@ -65,10 +65,10 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
     }
 
     /// <inheritdoc/>
-    public async Task<TAggregate?> Find(Guid id, CancellationToken cancellationToken)
+    public async Task<TAggregate?> Find(string publicIdentifier, CancellationToken cancellationToken)
     {
         return await this.Client.AggregateStream<TAggregate>(
-            id,
+            publicIdentifier,
             null,
             cancellationToken)
             .ConfigureAwait(false);
@@ -80,14 +80,22 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
         var eventsToAppend = GetEventsToStore(aggregate);
         var nextVersion = expectedRevision ?? aggregate.Version - (ulong)eventsToAppend.Count;
 
-        var result = await this.Client.AppendToStreamAsync(
-            StreamNameMapper.ToStreamId<TAggregate>(aggregate.Id),
-            nextVersion,
-            eventsToAppend,
-            cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+        try
+        {
+            var result = await this.Client.AppendToStreamAsync(
+                StreamNameMapper.ToStreamId<TAggregate>(aggregate.PublicIdentifier),
+                nextVersion,
+                eventsToAppend,
+                cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
 
         return result.NextExpectedStreamRevision.ToUInt64();
+        }
+        catch(Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.Message);
+            throw;
+        }
     }
 
     private static List<EventData> GetEventsToStore(TAggregate aggregate)

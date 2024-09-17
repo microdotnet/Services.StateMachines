@@ -12,15 +12,27 @@
 
         private readonly Collection<Transition> transitions = new Collection<Transition>();
 
-        private MachineDefinitionAggregateRoot(MachineName machineName)
+        public MachineDefinitionAggregateRoot()
+        {
+            this.MachineName = MachineName.Empty;
+        }
+
+        private MachineDefinitionAggregateRoot(Guid id, MachineName machineName)
         {
             this.MachineName = machineName;
-            var @event = MachineDefinitionCreated.Create(machineName);
+            var @event = new MachineDefinitionCreated(id, machineName);
             this.Enqueue(@event);
             this.Apply(@event);
         }
 
         public MachineName MachineName { get; private set; }
+
+        public override string PublicIdentifier => CreatePublicIdentifier(this.MachineName.Code, this.MachineName.Version);
+
+        public static string CreatePublicIdentifier(string code, short version)
+        {
+            return $"{code}_{version}";
+        }
 
         public static MachineDefinitionAggregateRoot Create(MachineName machineName)
         {
@@ -29,7 +41,7 @@
                 throw new ArgumentNullException(nameof(machineName));
             }
 
-            return new MachineDefinitionAggregateRoot(machineName);
+            return new MachineDefinitionAggregateRoot(Guid.NewGuid(), machineName);
         }
 
         public void AddNodes(Node[] nodes)
@@ -46,7 +58,7 @@
                     nameof(nodes));
             }
 
-            var @event = MachineNodesAdded.Create(nodes);
+            var @event = new MachineNodesAdded(nodes);
             this.Enqueue(@event);
             this.Apply(@event);
         }
@@ -97,7 +109,7 @@
                         trigger));
             }
 
-            var @event = TransitionAdded.Create(source, target, trigger);
+            var @event = new TransitionAdded(source, target, trigger);
             this.Enqueue(@event);
             this.Apply(@event);
         }
@@ -122,6 +134,7 @@
 
         private void Apply(MachineDefinitionCreated @event)
         {
+            this.Id = @event.Id;
             this.MachineName = @event.MachineName;
         }
 

@@ -1,19 +1,19 @@
 ﻿namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure.MachineDefinitionEvents
 {
+    using System;
+
     public sealed class MachineDefinitionCreated
     {
-        private MachineDefinitionCreated(
+        public MachineDefinitionCreated(
+            Guid id,
             MachineName machineName)
         {
+            this.Id = id;
             this.MachineName = machineName;
         }
 
-        public MachineName MachineName { get; }
+        public Guid Id { get; }
 
-        public static MachineDefinitionCreated Create(
-            MachineName machineName)
-        {
-            return new MachineDefinitionCreated(machineName);
-        }
+        public MachineName MachineName { get; }
     }
 }

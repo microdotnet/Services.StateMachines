@@ -7,6 +7,8 @@
     {
         Guid Id { get; }
 
+        string PublicIdentifier { get; }
+
         ulong Version { get; }
 
         IEnumerable<object> DequeueUncommittedEvents();

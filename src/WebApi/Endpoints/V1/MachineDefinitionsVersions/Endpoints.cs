@@ -1,5 +1,9 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitionsVersions;
 
+using MicroDotNet.Services.StateMachines.Application.AggregatesManager;
+using MicroDotNet.Services.StateMachines.Domain.MachineDetails;
+using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
+
 using Microsoft.AspNetCore.Http.HttpResults;
 
 public static class Endpoints
@@ -10,25 +14,26 @@ public static class Endpoints
 
     public const string AcceptMachineVersionEndpointName = "V1_MachineDefinitions_Versions_Accept";
 
-    public static IResult Create(
+    public static async Task<IResult> Create(
         LinkGenerator linkGenerator,
+        IAggregatesRepository<MachineDetailsAggregateRoot> machinesDetailsReposiory,
+        IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository,
         string code)
     {
-        var machine = Db.GetMachineDefinition(code);
+        var machine = await machinesDetailsReposiory.Find(
+            MachineDetailsAggregateRoot.CreatePublicIdentifier(code),
+            CancellationToken.None);
         if (machine is null)
         {
             return Results.NotFound();
         }
 
-        var lastVersion = 0;
-        if (machine.Versions.Count != 0)
-        {
-            lastVersion = machine.Versions.Max(v => v.Number);
-        }
 
-        var newVersion = new Db.MachineVersion { Number = (short)(lastVersion + 1) };
-        machine.Versions.Add(newVersion);
-        var output = new CreateOutput(newVersion.Number);
+        short newVersion = machine.AddNewVersion();
+        var machineDefinition = MachineDefinitionAggregateRoot.Create(Domain.MachineName.Create(machine.Code, newVersion));
+        await machineDefinitionsRepository.AddAsync(machineDefinition, CancellationToken.None);
+        await machinesDetailsReposiory.UpdateAsync(machine, machine.Version, CancellationToken.None);
+        var output = new CreateOutput(machineDefinition.MachineName.Version);
         var link = linkGenerator.GetPathByName(
             GetMachineVersionEndpointName,
             values: new { code, version = output.Version });

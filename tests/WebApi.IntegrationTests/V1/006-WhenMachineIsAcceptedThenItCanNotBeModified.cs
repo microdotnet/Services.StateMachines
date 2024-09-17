@@ -5,7 +5,7 @@ using MachineVersionTransitions = MicroDotNet.Services.StateMachines.WebApi.Endp
 partial class Tests
 {
     [Fact]
-    public async Task WhenMachineIsAcceptedThenItCanNotBeModified()
+    public async Task TC006_WhenMachineIsAcceptedThenItCanNotBeModified()
     {
         var createMachinePayload = CreateMachineCreationPayload();
         var createMachineRequest = new HttpRequestMessage(

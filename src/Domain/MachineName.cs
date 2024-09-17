@@ -6,6 +6,8 @@
     [DebuggerDisplay("{Code} - V{Version}")]
     public sealed class MachineName
     {
+        public static readonly MachineName Empty = new MachineName(string.Empty, 0);
+
         private MachineName(string code, short version)
         {
             this.Code = code;
@@ -25,7 +27,7 @@
                     nameof(code));
             }
 
-            if (version < 0)
+            if (version <= 0)
             {
                 throw new ArgumentException(
                     MachineNameResources.Create_VersionIsNotPositive,

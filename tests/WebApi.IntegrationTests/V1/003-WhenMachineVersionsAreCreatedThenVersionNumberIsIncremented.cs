@@ -5,7 +5,7 @@ using MachineDefinitionVersions = MicroDotNet.Services.StateMachines.WebApi.Endp
 partial class Tests
 {
     [Fact]
-    public async Task WhenMachineVersionsAreCreatedThenVersionNumberIsIncremented()
+    public async Task TC003_WhenMachineVersionsAreCreatedThenVersionNumberIsIncremented()
     {
         var createMachinePayload = CreateMachineCreationPayload();
         var createMachineRequest = new HttpRequestMessage(
