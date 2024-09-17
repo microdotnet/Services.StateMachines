@@ -15,6 +15,7 @@ public static class EventStoreSerializer
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
+        SerializerSettings.Converters.Add(new Serialization.Domain.MachineNameJsonConverter());
     }
 
     public static T? Deserialize<T>(this ResolvedEvent resolvedEvent)

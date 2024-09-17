@@ -1,37 +1,55 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitionsVersionsNodes;
 
+using System.Collections.ObjectModel;
+
+using MicroDotNet.Services.StateMachines.Application.AggregatesManager;
+using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
+
 public static class Endpoints
 {
     private const string AddNodesEndpointName = "V1_MachineDefinitions_Versions_Nodes_Add";
 
-    public static IResult AddNodes(
+    public static async Task<IResult> AddNodes(
         string code,
         short version,
-        AddNodesInput input)
+        AddNodesInput input,
+        IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
     {
-        var machine = Db.GetMachineDefinition(code);
-        if (machine is null)
+        try
         {
-            return Results.NotFound();
-        }
+            var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
+            var machine = await machineDefinitionsRepository.Find(
+                publicIdentifier,
+                CancellationToken.None);
 
-        var lastVersion = 0;
-        if (machine.Versions.Count != 0)
+            if (machine is null)
+            {
+                return Results.NotFound();
+            }
+
+            if (machine.Status != Status.InDesign)
+            {
+                return Results.UnprocessableEntity();
+            }
+
+            var nodes = new Collection<Node>();
+            foreach (var item in input.Nodes)
+            {
+                nodes.Add(Node.Create(item.Name));
+            }
+
+            machine.AddNodes([.. nodes]);
+            await machineDefinitionsRepository.UpdateAsync(
+                machine,
+                machine.Version,
+                CancellationToken.None);
+            return Results.Ok();
+        }
+        catch(Exception ex)
         {
-            lastVersion = machine.Versions.Max(v => v.Number);
+            System.Diagnostics.Debug.WriteLine(ex.Message);
+            throw;
         }
-
-        if (lastVersion == 0)
-        {
-            return Results.NotFound();
-        }
-
-        if (machine.Confirmed)
-        {
-            return Results.UnprocessableEntity();
-        }
-
-        return Results.Ok();
     }
 
     public static void MapEndpoints(WebApplication app)

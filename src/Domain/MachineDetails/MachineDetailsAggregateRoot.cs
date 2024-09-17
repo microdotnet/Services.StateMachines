@@ -13,6 +13,7 @@
 
         public MachineDetailsAggregateRoot()
         {
+            this.Id = Guid.Empty;
             this.Code = string.Empty;
             this.Name = string.Empty;
             this.Description = string.Empty;
@@ -23,11 +24,8 @@
             string code,
             string name,
             string description)
+            : this()
         {
-            this.Id = id;
-            this.Code = code;
-            this.Name = name;
-            this.Description = description;
             var @event = new MachineDetailCreated(id, code, name, description);
             this.Enqueue(@event);
             this.Apply(@event);

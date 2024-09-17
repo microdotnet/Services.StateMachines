@@ -15,17 +15,20 @@
         public MachineDefinitionAggregateRoot()
         {
             this.MachineName = MachineName.Empty;
+            this.Status = Status.InDesign;
         }
 
         private MachineDefinitionAggregateRoot(Guid id, MachineName machineName)
+            : this()
         {
-            this.MachineName = machineName;
             var @event = new MachineDefinitionCreated(id, machineName);
             this.Enqueue(@event);
             this.Apply(@event);
         }
 
         public MachineName MachineName { get; private set; }
+
+        public Status Status { get; private set; }
 
         public override string PublicIdentifier => CreatePublicIdentifier(this.MachineName.Code, this.MachineName.Version);
 
