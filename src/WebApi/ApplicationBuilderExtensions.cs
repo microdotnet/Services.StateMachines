@@ -45,6 +45,8 @@ public static class ApplicationBuilderExtensions
 
     public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
         ////services.AddGrpc();
         ////services.Configure<QueueRepositorySettings>(configuration.GetSection("QueueRepository"));
         ////services.Configure<DocumentGeneratorSettings>(configuration.GetSection("DocumentGenerator"));
@@ -62,6 +64,13 @@ public static class ApplicationBuilderExtensions
 
     public static void ConfigureApplication(this WebApplication app)
     {
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.MapSwagger();
         app.MapEndpoints();
     }
 
