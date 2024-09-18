@@ -2,10 +2,12 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Text.Json.Serialization;
 
     [DebuggerDisplay("Node '{Name}'")]
     public sealed class Node
     {
+        [JsonConstructor]
         private Node(string name)
         {
             this.Name = name;

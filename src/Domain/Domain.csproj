@@ -10,6 +10,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Compile Update="MachineDetails\MachineDetailsAggregateRootResources.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
