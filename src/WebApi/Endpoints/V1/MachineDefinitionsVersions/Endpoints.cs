@@ -47,28 +47,31 @@ public static class Endpoints
         return Results.Ok();
     }
 
-    public static IResult Accept(
+    public static async Task<IResult> Accept(
         string code,
-        short version)
+        short version,
+        IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
     {
-        var machine = Db.GetMachineDefinition(code);
+        var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
+        var machine = await machineDefinitionsRepository.Find(
+            publicIdentifier,
+            CancellationToken.None);
+
         if (machine is null)
         {
             return Results.NotFound();
         }
 
-        var lastVersion = 0;
-        if (machine.Versions.Count != 0)
+        if (machine.Status != Status.InDesign)
         {
-            lastVersion = machine.Versions.Max(v => v.Number);
+            return Results.UnprocessableEntity();
         }
 
-        if (lastVersion == 0)
-        {
-            return Results.NotFound();
-        }
-
-        Db.ConfirmMachine(machine.Id);
+        machine.Confirm();
+        await machineDefinitionsRepository.UpdateAsync(
+            machine,
+            machine.Version,
+            CancellationToken.None);
         return Results.Ok();
     }
 

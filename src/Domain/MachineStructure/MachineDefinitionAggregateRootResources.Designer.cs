@@ -105,5 +105,14 @@ namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure {
                 return ResourceManager.GetString("AddTransition_TriggerMustNotBeEmpty", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Machine is not being designed and cannot be confirmed..
+        /// </summary>
+        internal static string Confirm_NotInDesign {
+            get {
+                return ResourceManager.GetString("Confirm_NotInDesign", resourceCulture);
+            }
+        }
     }
 }

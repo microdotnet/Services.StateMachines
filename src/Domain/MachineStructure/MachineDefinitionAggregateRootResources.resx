@@ -137,4 +137,8 @@
     <value>Nodes to be added array is empty</value>
     <comment>Nodes to be added array is empty</comment>
   </data>
+  <data name="Confirm_NotInDesign" xml:space="preserve">
+    <value>Machine is not being designed and cannot be confirmed.</value>
+    <comment>Machine is not being designed and cannot be confirmed.</comment>
+  </data>
 </root>

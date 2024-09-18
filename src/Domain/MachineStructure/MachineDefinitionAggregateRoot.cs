@@ -117,6 +117,19 @@
             this.Apply(@event);
         }
 
+        public void Confirm()
+        {
+            if (this.Status != Status.InDesign)
+            {
+                throw new InvalidOperationException(
+                    MachineDefinitionAggregateRootResources.Confirm_NotInDesign);
+            }
+
+            var @event = new MachineConfirmed();
+            this.Enqueue(@event);
+            this.Apply(@event);
+        }
+
         public override void When(object @event)
         {
             switch (@event)
@@ -129,6 +142,9 @@
                     break;
                 case TransitionAdded transitionAdded:
                     this.Apply(transitionAdded);
+                    break;
+                case MachineConfirmed machineConfirmed:
+                    this.Apply(machineConfirmed);
                     break;
             }
 
@@ -156,6 +172,11 @@
                     @event.Source,
                     @event.Target,
                     @event.Trigger));
+        }
+
+        private void Apply(MachineConfirmed @event)
+        {
+            this.Status = Status.Completed;
         }
     }
 }
