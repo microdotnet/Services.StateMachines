@@ -1,119 +1,49 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
+using MicroDotNet.Services.StateMachines.Application.AggregatesManager;
+using MicroDotNet.Services.StateMachines.Domain;
+using MicroDotNet.Services.StateMachines.Domain.MachineDetails;
+using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
+
 public static class Endpoints
 {
     public const string CreateMachineEndpointName = "V1_MachineDefinitions_Create";
 
     public const string GetMachineEndpointName = "V1_MachineDefinitions_Get";
 
-    private const string UpdateMachineEndpointName = "V1_MachineDefinitions_Update";
-
-    public static IResult Get(
-        string code,
-        short version,
-        LinkGenerator linkGenerator)
-    {
-        var machine = FindMachine(code, version);
-        if (machine is null)
-        {
-            return Results.NotFound();
-        }
-
-        var result = new MachineDefinition(
-            machine.Id,
-            machine.MachineCode,
-            machine.MachineVersion,
-            machine.Nodes,
-            machine.Transitions,
-            machine.Confirmed);
-        return Results.Ok(result);
-    }
-
-    public static IResult Post(
+    public static async Task<IResult> Create(
         LinkGenerator linkGenerator,
-        PostPayload payload)
+        IAggregatesRepository<MachineDetailsAggregateRoot> aggregatesRepository,
+        CreateInput payload)
     {
-        var machine = FindMachine(payload.Code, payload.Version);
-        if (machine is not null)
-        {
-            return Results.BadRequest();
-        }
-
         var id = Guid.NewGuid();
-        var definitionToStore = new Db.MachineData(
+        var machineAggregate = MachineDetailsAggregateRoot.Create(
             id,
             payload.Code,
-            payload.Version,
-            payload.Nodes,
-            payload.Transitions);
-        Db.AddMachineDefinition(definitionToStore);
+            payload.Name,
+            payload.Description);
+        await aggregatesRepository.AddAsync(machineAggregate, CancellationToken.None)
+            .ConfigureAwait(false);
         var link = linkGenerator.GetPathByName(
             GetMachineEndpointName,
-            values: new { code = payload.Code, version = payload.Version });
-
-        var result = new MachineDefinition(
-            id,
-            definitionToStore.MachineCode,
-            definitionToStore.MachineVersion,
-            definitionToStore.Nodes,
-            definitionToStore.Transitions,
-            definitionToStore.Confirmed);
-        return Results.Created(link, result);
+            values: new { code = payload.Code });
+        var output = new CreateOutput(id);
+        return Results.Created(link, output);
     }
 
-    public static IResult Put(
-        LinkGenerator linkGenerator,
-        string code,
-        short version,
-        PutPayload payload)
+    public static IResult Get(
+        string code)
     {
-        var machine = FindMachine(code, version);
-        if (machine is null)
-        {
-            return Results.NotFound();
-        }
-
-        if (machine.Confirmed)
-        {
-            return Results.UnprocessableEntity();
-        }
-
-        var id = machine.Id;
-        var definitionToStore = new Db.MachineData(
-            id,
-            code,
-            version,
-            payload.Nodes,
-            payload.Transitions);
-        Db.UpdateMachineDefinition(definitionToStore);
-        var link = linkGenerator.GetPathByName(
-            GetMachineEndpointName,
-            values: new { code, version });
-        var result = new MachineDefinition(
-           definitionToStore.Id,
-           definitionToStore.MachineCode,
-           definitionToStore.MachineVersion,
-           definitionToStore.Nodes,
-           definitionToStore.Transitions,
-           definitionToStore.Confirmed);
-        return Results.Accepted(link, result);
+        return Results.Problem();
     }
 
     public static void MapEndpoints(WebApplication app)
     {
-        app.MapPost("/v1/machineDefinitions", Post)
+        app.MapPost("/v1/machineDefinitions", Create)
             .WithName(CreateMachineEndpointName)
             .WithOpenApi();
-        app.MapGet("/v1/machineDefinitions/{code}/{version}", Get)
+        app.MapGet("/v1/machineDefinitions/{code}", Get)
             .WithName(GetMachineEndpointName)
             .WithOpenApi();
-        app.MapPut("/v1/machineDefinitions/{code}/{version}", Put)
-            .WithName(UpdateMachineEndpointName)
-            .WithOpenApi();
-    }
-
-    private static Db.MachineData? FindMachine(string code, short version)
-    {
-        return Db.GetMachineDefinition(code, version);
     }
 }
