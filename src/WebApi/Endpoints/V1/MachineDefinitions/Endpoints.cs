@@ -24,16 +24,6 @@ public static class Endpoints
             payload.Description);
         await aggregatesRepository.AddAsync(machineAggregate, CancellationToken.None)
             .ConfigureAwait(false);
-        ////var machine = new Db.Machine
-        ////{
-        ////    Id = Guid.NewGuid(),
-        ////    Code = payload.Code,
-        ////    Name = payload.Name,
-        ////    Description = payload.Description,
-        ////    Confirmed = false,
-        ////};
-        ////Db.AddMachineDefinition(machine);
-
         var link = linkGenerator.GetPathByName(
             GetMachineEndpointName,
             values: new { code = payload.Code });
@@ -44,7 +34,7 @@ public static class Endpoints
     public static IResult Get(
         string code)
     {
-        return Results.Ok();
+        return Results.Problem();
     }
 
     public static void MapEndpoints(WebApplication app)

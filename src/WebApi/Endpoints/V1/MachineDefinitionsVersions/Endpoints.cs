@@ -40,11 +40,28 @@ public static class Endpoints
         return Results.Created(link, output);
     }
 
-    public static IResult Get(
+    public static async Task<IResult> Get(
         string code,
-        short version)
+        short version,
+        IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
     {
-        return Results.Ok();
+        var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
+        var machine = await machineDefinitionsRepository.Find(
+            publicIdentifier,
+            CancellationToken.None);
+
+        if (machine is null)
+        {
+            return Results.NotFound();
+        }
+
+        var result = new GetOutput(
+            machine.MachineName.Code,
+            machine.MachineName.Version,
+            machine.Status.Code,
+            machine.Nodes.Select(n => new GetOutput.Node(n.Name)).ToList(),
+            machine.Transitions.Select(t => new GetOutput.Transition((string)t.Source, (string)t.Target, t.Trigger)).ToList());
+        return Results.Ok(result);
     }
 
     public static async Task<IResult> Accept(

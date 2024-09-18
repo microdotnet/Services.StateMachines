@@ -1,6 +1,7 @@
 ﻿namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
 
@@ -29,6 +30,10 @@
         public MachineName MachineName { get; private set; }
 
         public Status Status { get; private set; }
+
+        public IReadOnlyCollection<Node> Nodes => this.nodes;
+
+        public IReadOnlyCollection<Transition> Transitions => this.transitions;
 
         public override string PublicIdentifier => CreatePublicIdentifier(this.MachineName.Code, this.MachineName.Version);
 
