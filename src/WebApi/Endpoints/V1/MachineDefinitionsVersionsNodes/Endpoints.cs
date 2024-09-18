@@ -15,41 +15,33 @@ public static class Endpoints
         AddNodesInput input,
         IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
     {
-        try
+        var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
+        var machine = await machineDefinitionsRepository.Find(
+            publicIdentifier,
+            CancellationToken.None);
+
+        if (machine is null)
         {
-            var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
-            var machine = await machineDefinitionsRepository.Find(
-                publicIdentifier,
-                CancellationToken.None);
-
-            if (machine is null)
-            {
-                return Results.NotFound();
-            }
-
-            if (machine.Status != Status.InDesign)
-            {
-                return Results.UnprocessableEntity();
-            }
-
-            var nodes = new Collection<Node>();
-            foreach (var item in input.Nodes)
-            {
-                nodes.Add(Node.Create(item.Name));
-            }
-
-            machine.AddNodes([.. nodes]);
-            await machineDefinitionsRepository.UpdateAsync(
-                machine,
-                machine.Version,
-                CancellationToken.None);
-            return Results.Ok();
+            return Results.NotFound();
         }
-        catch(Exception ex)
+
+        if (machine.Status != Status.InDesign)
         {
-            System.Diagnostics.Debug.WriteLine(ex.Message);
-            throw;
+            return Results.UnprocessableEntity();
         }
+
+        var nodes = new Collection<Node>();
+        foreach (var item in input.Nodes)
+        {
+            nodes.Add(Node.Create(item.Name));
+        }
+
+        machine.AddNodes([.. nodes]);
+        await machineDefinitionsRepository.UpdateAsync(
+            machine,
+            machine.Version,
+            CancellationToken.None);
+        return Results.Ok();
     }
 
     public static void MapEndpoints(WebApplication app)
