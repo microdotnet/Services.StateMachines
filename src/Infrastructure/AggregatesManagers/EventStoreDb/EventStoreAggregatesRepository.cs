@@ -65,7 +65,7 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
     }
 
     /// <inheritdoc/>
-    public async Task<TAggregate?> Find(string publicIdentifier, CancellationToken cancellationToken)
+    public async Task<TAggregate?> FindAsync(string publicIdentifier, CancellationToken cancellationToken)
     {
         return await this.Client.AggregateStream<TAggregate>(
             publicIdentifier,
