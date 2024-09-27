@@ -4,5 +4,5 @@ using EventStore.Client;
 
 public interface IEventStoreClientProvider
 {
-    EventStoreClient? Create(string name);
+    EventStoreClient Create(string name);
 }

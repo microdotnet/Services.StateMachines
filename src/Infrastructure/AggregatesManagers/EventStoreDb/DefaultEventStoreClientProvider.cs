@@ -17,7 +17,7 @@ public sealed class DefaultEventStoreClientProvider : IEventStoreClientProvider
         this.configuration = configuration;
     }
 
-    public EventStoreClient? Create(string name)
+    public EventStoreClient Create(string name)
     {
         if (this.clients.TryGetValue(name, out var value))
         {
