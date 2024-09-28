@@ -17,16 +17,12 @@
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            return Task.Run(
-                async () =>
-                {
-                    var request = new CreateSubscriptionRequest(
-                        "ReadDatabaseProcessing",
-                        this.HandleEvent);
-                    await this.eventsMaterializationProvider.CreateSubscriptionAsync(
-                        request,
-                        stoppingToken);
-                });
+            var request = new CreateSubscriptionRequest(
+                "ReadDatabaseProcessing",
+                this.HandleEvent);
+            return this.eventsMaterializationProvider.CreateSubscriptionAsync(
+                request,
+                stoppingToken);
         }
 
         private async Task HandleEvent(IEventEnvelope e, CancellationToken ct)

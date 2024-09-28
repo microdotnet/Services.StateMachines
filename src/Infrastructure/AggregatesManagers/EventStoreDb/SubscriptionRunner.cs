@@ -126,6 +126,11 @@
                 return;
             }
 
+            if (exception is OperationCanceledException)
+            {
+                return;
+            }
+
             this.logger.LogError(
                 exception,
                 "Subscription to all '{SubscriptionId}' dropped with '{StatusCode}' and '{Reason}'",
