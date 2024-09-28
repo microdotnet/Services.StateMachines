@@ -17,7 +17,7 @@
 
         private readonly object resubscribeLock = new();
 
-        private readonly ILogger logger;
+        private readonly ILogger<SubscriptionRunner> logger;
 
         public SubscriptionRunner(
             ICheckpointManager checkpointManager,
@@ -89,7 +89,7 @@
                     // then we might get events that are from other module and we might not be able to deserialize them.
                     // In that case it's safe to ignore deserialization error.
                     // You may add more sophisticated logic checking if it should be ignored or not.
-                    this.logger.LogWarning("Couldn't deserialize event with id: {EventId}", resolvedEvent.Event.EventId);
+                    this.logger.EventDeserializationFailed(resolvedEvent.Event.EventId);
 
                     throw new InvalidOperationException(
                         $"Unable to deserialize event {resolvedEvent.Event.EventType} with id: {resolvedEvent.Event.EventId}");
@@ -103,11 +103,11 @@
             }
             catch (Exception e)
             {
-                this.logger.LogError(
-                    "[{SubscriptionName}] - Error consuming message: {ExceptionMessage}{ExceptionStackTrace}",
+                this.logger.MessageConsumptionError(
                     subscriptionName,
                     e.Message,
-                    e.StackTrace);
+                    e.StackTrace,
+                    e);
 
                 // if you're fine with dropping some events instead of stopping subscription
                 // then you can add some logic if error should be ignored
@@ -119,8 +119,7 @@
         {
             if (exception is RpcException { StatusCode: StatusCode.Cancelled })
             {
-                this.logger.LogWarning(
-                    "Subscription '{SubscriptionId}' dropped by client",
+                this.logger.SubscriptionDroppedByClient(
                     subscriptionName);
 
                 return;
@@ -131,12 +130,11 @@
                 return;
             }
 
-            this.logger.LogError(
-                exception,
-                "Subscription to all '{SubscriptionId}' dropped with '{StatusCode}' and '{Reason}'",
+            this.logger.SubscriptionDroppedWithError(
                 subscriptionName,
                 (exception as RpcException)?.StatusCode ?? StatusCode.Unknown,
-                reason);
+                reason,
+                exception);
 
             this.Resubscribe(subscriptionName, CancellationToken.None);
         }
@@ -167,12 +165,11 @@
                 }
                 catch (Exception exception)
                 {
-                    this.logger.LogWarning(
-                        exception,
-                        "Failed to resubscribe to all '{SubscriptionId}' dropped with '{ExceptionMessage}{ExceptionStackTrace}'",
+                    this.logger.ResubscriptionFailed(
                         subscriptionName,
                         exception.Message,
-                        exception.StackTrace);
+                        exception.StackTrace,
+                        exception);
                 }
                 finally
                 {
@@ -197,7 +194,7 @@
                 return false;
             }
 
-            this.logger.LogWarning("Event without data received");
+            this.logger.NoDataEvent(resolvedEvent.Event.EventId);
             return true;
         }
 
@@ -208,7 +205,7 @@
                 return false;
             }
 
-            this.logger.LogInformation("Checkpoint event - ignoring");
+            this.logger.CheckpointEventFound();
             return true;
         }
 
