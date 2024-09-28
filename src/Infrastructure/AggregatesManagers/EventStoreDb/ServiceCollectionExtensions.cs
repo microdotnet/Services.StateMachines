@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IAggregatesRepository<>), typeof(EventStoreAggregatesRepository<>));
         services.AddScoped<IEventsMaterialization, EventStoreEventsMaterialization>();
         services.AddSingleton<ICheckpointManager, EventStoreCheckpointManager>();
+        services.AddSingleton<ISubscriptionRunnersCache, DefaultSubscriptionRunnersCache>();
 
         return services;
     }

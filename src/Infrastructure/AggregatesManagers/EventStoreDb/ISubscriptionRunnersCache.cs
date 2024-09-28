@@ -4,5 +4,5 @@ public interface ISubscriptionRunnersCache
 {
     void Set(SubscriptionRunContext context);
 
-    SubscriptionRunContext Get(string subscriptionId);
+    SubscriptionRunContext? Get(string subscriptionId);
 }
