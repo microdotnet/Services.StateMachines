@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEventsMaterialization, EventStoreEventsMaterialization>();
         services.AddSingleton<ICheckpointManager, EventStoreCheckpointManager>();
         services.AddSingleton<ISubscriptionRunnersCache, DefaultSubscriptionRunnersCache>();
+        services.AddTransient<SubscriptionRunner, SubscriptionRunner>();
 
         return services;
     }

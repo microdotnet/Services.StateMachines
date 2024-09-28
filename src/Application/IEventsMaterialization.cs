@@ -9,6 +9,6 @@
     {
         Task<CreateSubscriptionResponse> CreateSubscriptionAsync(
             CreateSubscriptionRequest request,
-            CancellationToken cancellationToken);
+            CancellationToken stopProcessingToken);
     }
 }

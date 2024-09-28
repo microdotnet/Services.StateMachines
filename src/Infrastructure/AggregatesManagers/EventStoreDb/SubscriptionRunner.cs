@@ -31,10 +31,10 @@
             Func<SubscriptionRunner> instanceFactory,
             CreateSubscriptionRequest request,
             EventStoreClient client,
-            CancellationToken cancellationToken)
+            CancellationToken stopProcessingToken)
         {
             var runner = instanceFactory();
-            var checkpoint = await runner.checkpointManager.GetLastCheckpoint(request.SubscriptionName, cancellationToken)
+            var checkpoint = await runner.checkpointManager.GetLastCheckpoint(request.SubscriptionName, CancellationToken.None)
                 .ConfigureAwait(false);
 
             var subscription = await client.SubscribeToAllAsync(
@@ -44,7 +44,7 @@
                 (subscription, reason, exception) => runner.HandleDrop(subscription, request.SubscriptionName, reason, exception),
                 subscriptionOptions.FilterOptions,
                 subscriptionOptions.Credentials,
-                cancellationToken)
+                stopProcessingToken)
                 .ConfigureAwait(false);
             return new SubscriptionRunContext(runner, subscription);
         }

@@ -31,10 +31,10 @@
 
         public async Task<CreateSubscriptionResponse> CreateSubscriptionAsync(
             CreateSubscriptionRequest request,
-            CancellationToken cancellationToken)
+            CancellationToken stopProcessingToken)
         {
             var client = this.eventStoreClientProvider.Create("EventsDB");
-            var runner = await SubscriptionRunner.Create(this.subscriptionRunnerFactory, request, client, cancellationToken)
+            var runner = await SubscriptionRunner.Create(this.subscriptionRunnerFactory, request, client, stopProcessingToken)
                 .ConfigureAwait(false);
             this.subscriptionRunnersCache.Set(runner);
             return new CreateSubscriptionResponse(runner.Subscription.SubscriptionId);
