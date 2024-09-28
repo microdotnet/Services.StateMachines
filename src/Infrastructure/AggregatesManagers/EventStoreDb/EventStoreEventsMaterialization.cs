@@ -13,38 +13,31 @@
 
         private readonly ICheckpointManager checkpointManager;
 
-        private readonly Func<ICheckpointManager> checkpointManagerFactory;
+        private readonly ISubscriptionRunnersCache subscriptionRunnersCache;
+
+        private readonly Func<SubscriptionRunner> subscriptionRunnerFactory;
 
         public EventStoreEventsMaterialization(
             IEventStoreClientProvider eventStoreClientProvider,
             ICheckpointManager checkpointManager,
-            Func<ICheckpointManager> checkpointManagerFactory)
+            Func<SubscriptionRunner> checkpointManagerFactory,
+            ISubscriptionRunnersCache subscriptionRunnersCache)
         {
             this.eventStoreClientProvider = eventStoreClientProvider ?? throw new ArgumentNullException(nameof(eventStoreClientProvider));
             this.checkpointManager = checkpointManager ?? throw new ArgumentNullException(nameof(checkpointManager));
-            this.checkpointManagerFactory = checkpointManagerFactory ?? throw new ArgumentNullException(nameof(checkpointManagerFactory));
+            this.subscriptionRunnerFactory = checkpointManagerFactory ?? throw new ArgumentNullException(nameof(checkpointManagerFactory));
+            this.subscriptionRunnersCache = subscriptionRunnersCache ?? throw new ArgumentNullException(nameof(subscriptionRunnersCache));
         }
 
         public async Task<CreateSubscriptionResponse> CreateSubscriptionAsync(
             CreateSubscriptionRequest request,
             CancellationToken cancellationToken)
         {
-            await Task.Delay(20, cancellationToken);
-            return new CreateSubscriptionResponse(string.Empty);
-            ////this.cancellationToken = cancellationToken;
-            ////var client = this.eventStoreClientProvider.Create("EventsDB");
-            ////var checkpoint = await this.GetLastCheckpoint(client, request.SubscriptionName, this.cancellationToken)
-            ////    .ConfigureAwait(false);
-
-            ////var subscription = await client.SubscribeToAllAsync(
-            ////    checkpoint == null ? FromAll.Start : FromAll.After(new Position(checkpoint.Value, checkpoint.Value)),
-            ////    (subscription, resolvedEvent, token) => this.HandleEvent(request.EventHandler, subscription, resolvedEvent, request.SubscriptionName, token),
-            ////    this.subscriptionOptions.ResolveLinkTos,
-            ////    (subscription, reason, exception) => this.HandleDrop(subscription, request.SubscriptionName, reason, exception),
-            ////    this.subscriptionOptions.FilterOptions,
-            ////    this.subscriptionOptions.Credentials,
-            ////    this.cancellationToken).ConfigureAwait(false);
-            ////return SubscribeToAllResponse.Succeeded(subscription.SubscriptionId);
+            var client = this.eventStoreClientProvider.Create("EventsDB");
+            var runner = await SubscriptionRunner.Create(this.subscriptionRunnerFactory, request, client, cancellationToken)
+                .ConfigureAwait(false);
+            this.subscriptionRunnersCache.Set(runner);
+            return new CreateSubscriptionResponse(runner.Subscription.SubscriptionId);
         }
     }
 }
