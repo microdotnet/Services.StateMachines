@@ -2,6 +2,7 @@
 
 using MicroDotNet.Services.StateMachines.Application;
 using MicroDotNet.Services.StateMachines.Application.AggregatesManager;
+using MicroDotNet.Services.StateMachines.Infrastructure.ReadModel.Mongo;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services)
     {
         services.AddEventStoreDb();
+        services.AddMongoReadModel();
 
         services.AddScoped(typeof(IAggregatesRepository<>), typeof(EventStoreAggregatesRepository<>));
         services.AddScoped<IEventsMaterialization, EventStoreEventsMaterialization>();
