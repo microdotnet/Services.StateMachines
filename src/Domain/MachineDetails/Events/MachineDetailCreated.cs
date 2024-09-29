@@ -2,23 +2,21 @@
 {
     using System;
 
-    public sealed class MachineDetailCreated
+    public sealed class MachineDetailCreated : MachineDetailsEventBase
     {
         public MachineDetailCreated(
             Guid id,
             string code,
             string name,
             string description)
+            : base(code)
         {
             this.Id = id;
-            this.Code = code;
             this.Name = name;
             this.Description = description;
         }
 
         public Guid Id { get; }
-
-        public string Code { get; }
 
         public string Name { get; }
 

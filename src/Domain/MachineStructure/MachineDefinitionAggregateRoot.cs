@@ -66,7 +66,7 @@
                     nameof(nodes));
             }
 
-            var @event = new MachineNodesAdded(nodes);
+            var @event = new MachineNodesAdded(this.MachineName, nodes);
             this.Enqueue(@event);
             this.Apply(@event);
         }
@@ -117,7 +117,7 @@
                         trigger));
             }
 
-            var @event = new TransitionAdded(source, target, trigger);
+            var @event = new TransitionAdded(this.MachineName, source, target, trigger);
             this.Enqueue(@event);
             this.Apply(@event);
         }
@@ -130,7 +130,7 @@
                     MachineDefinitionAggregateRootResources.Confirm_NotInDesign);
             }
 
-            var @event = new MachineConfirmed();
+            var @event = new MachineConfirmed(this.MachineName);
             this.Enqueue(@event);
             this.Apply(@event);
         }

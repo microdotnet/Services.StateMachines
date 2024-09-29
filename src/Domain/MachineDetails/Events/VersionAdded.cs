@@ -2,9 +2,10 @@
 {
     using System;
 
-    public sealed class VersionAdded
+    public sealed class VersionAdded : MachineDetailsEventBase
     {
-        public VersionAdded(short versionNumber)
+        public VersionAdded(string code, short versionNumber)
+            : base(code)
         {
             this.VersionNumber = versionNumber;
         }
