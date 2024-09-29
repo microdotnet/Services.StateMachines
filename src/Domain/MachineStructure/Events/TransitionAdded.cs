@@ -1,11 +1,13 @@
-﻿namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure.MachineDefinitionEvents
+﻿namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure.Events
 {
-    public sealed class TransitionAdded
+    public sealed class TransitionAdded : MachineDefinitionEventBase
     {
         public TransitionAdded(
+            MachineName machineName,
             Node source,
             Node target,
             string trigger)
+            : base(machineName)
         {
             this.Source = source;
             this.Target = target;

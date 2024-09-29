@@ -28,7 +28,7 @@ partial class Tests
     private static MachineDefinitions.CreateInput CreateMachineCreationPayload()
     {
         return new MachineDefinitions.CreateInput(
-            $"MachineDefinition_{DateTime.Now.Ticks}",
+            $"MachineDefinition_{faker.Commerce.Ean13()}",
             faker.Commerce.ProductName(),
             faker.Commerce.ProductDescription());
     }

@@ -1,5 +1,8 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi;
 
+using Autofac.Extensions.DependencyInjection;
+
+using MicroDotNet.Services.StateMachines.Application.EventsMaterialization.EventHandlers;
 using MicroDotNet.Services.StateMachines.Infrastructure.AggregatesManagers.EventStoreDb;
 using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
 
@@ -37,7 +40,7 @@ public static class ApplicationBuilderExtensions
         IConfiguration configuration)
     {
         hostBuilder.ConfigureServices(sc => sc.StoreMachinesInEventStoreDb());
-        ////hostBuilder.UseServiceProviderFactory(
+        hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         ////    new ContainerServiceProviderFactory<AutofacContainerBuilder, AutofacResolutionScope>());
         ////hostBuilder.ConfigureContainer<IModule>(module => module.AddModule(new WebApiModule(configuration)));
         return hostBuilder;
@@ -47,6 +50,8 @@ public static class ApplicationBuilderExtensions
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        services.AddHostedService<HostedServices.ReadDatabaseProcessingService>();
+        services.AddMaterializationEventHandlers();
         ////services.AddGrpc();
         ////services.Configure<QueueRepositorySettings>(configuration.GetSection("QueueRepository"));
         ////services.Configure<DocumentGeneratorSettings>(configuration.GetSection("DocumentGenerator"));

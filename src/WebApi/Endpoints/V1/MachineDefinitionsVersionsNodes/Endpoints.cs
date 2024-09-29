@@ -16,7 +16,7 @@ public static class Endpoints
         IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
     {
         var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
-        var machine = await machineDefinitionsRepository.Find(
+        var machine = await machineDefinitionsRepository.FindAsync(
             publicIdentifier,
             CancellationToken.None);
 

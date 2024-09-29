@@ -10,9 +10,14 @@ public sealed class CustomWebApplicationFactory<TProgram> : WebApplicationFactor
 {
     private readonly EventStoreDbFixture eventStoreDb;
 
-    public CustomWebApplicationFactory(EventStoreDbFixture eventStoreDb)
+    private readonly MongoDbFixture mongoDb;
+
+    public CustomWebApplicationFactory(
+        EventStoreDbFixture eventStoreDb,
+        MongoDbFixture mongoDb)
     {
         this.eventStoreDb = eventStoreDb;
+        this.mongoDb = mongoDb;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -27,6 +32,7 @@ public sealed class CustomWebApplicationFactory<TProgram> : WebApplicationFactor
             var configuration = new Dictionary<string, string?>()
             {
                 ["ConnectionStrings:EventsDB"] = this.eventStoreDb.ConnectionString,
+                ["ConnectionStrings:WriteDB"] = this.mongoDb.ConnectionString,
             };
             bld.AddInMemoryCollection(configuration);
         });

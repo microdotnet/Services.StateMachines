@@ -20,7 +20,7 @@ public static class Endpoints
         IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository,
         string code)
     {
-        var machine = await machinesDetailsReposiory.Find(
+        var machine = await machinesDetailsReposiory.FindAsync(
             MachineDetailsAggregateRoot.CreatePublicIdentifier(code),
             CancellationToken.None);
         if (machine is null)
@@ -46,7 +46,7 @@ public static class Endpoints
         IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
     {
         var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
-        var machine = await machineDefinitionsRepository.Find(
+        var machine = await machineDefinitionsRepository.FindAsync(
             publicIdentifier,
             CancellationToken.None);
 
@@ -70,7 +70,7 @@ public static class Endpoints
         IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
     {
         var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
-        var machine = await machineDefinitionsRepository.Find(
+        var machine = await machineDefinitionsRepository.FindAsync(
             publicIdentifier,
             CancellationToken.None);
 

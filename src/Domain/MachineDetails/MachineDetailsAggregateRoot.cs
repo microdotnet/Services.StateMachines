@@ -92,7 +92,7 @@
             }
 
             currentVersionNumber++;
-            var @event = new VersionAdded(currentVersionNumber);
+            var @event = new VersionAdded(this.Code, currentVersionNumber);
             this.Enqueue(@event);
             this.Apply(@event);
             return currentVersionNumber;

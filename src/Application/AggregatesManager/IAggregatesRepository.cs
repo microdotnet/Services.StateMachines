@@ -9,7 +9,7 @@
     public interface IAggregatesRepository<TAggregate>
         where TAggregate : class, IAggregate
     {
-        Task<TAggregate?> Find(string publicIdentifier, CancellationToken cancellationToken);
+        Task<TAggregate?> FindAsync(string publicIdentifier, CancellationToken cancellationToken);
 
         Task<ulong> AddAsync(TAggregate aggregate, CancellationToken cancellationToken);
 
