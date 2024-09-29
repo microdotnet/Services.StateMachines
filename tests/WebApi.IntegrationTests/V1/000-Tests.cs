@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 public sealed partial class Tests :
     TestClassBase,
-    IClassFixture<EventStoreDbFixture>
+    IClassFixture<EventStoreDbFixture>,
+    IClassFixture<MongoDbFixture>
 {
     private static readonly Faker faker = new();
 
@@ -12,13 +13,13 @@ public sealed partial class Tests :
 
     private readonly HttpClient client;
 
-    private readonly EventStoreDbFixture eventStoreDb;
-
     public Tests(
-        EventStoreDbFixture eventStoreDb)
+        EventStoreDbFixture eventStoreDb,
+        MongoDbFixture mongoDb)
     {
-        this.eventStoreDb = eventStoreDb;
-        this.factory = new CustomWebApplicationFactory<WebApiProgram>(eventStoreDb);
+        this.factory = new CustomWebApplicationFactory<WebApiProgram>(
+            eventStoreDb,
+            mongoDb);
         this.client = this.factory.CreateClient(new WebApplicationFactoryClientOptions()
         {
             AllowAutoRedirect = true,

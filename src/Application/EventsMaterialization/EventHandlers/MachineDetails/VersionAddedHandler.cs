@@ -30,12 +30,12 @@
             var getMachineRequest = new GetMachineRequest(@event.Code);
             var getMachineResponse = await this.machineDetailsRepository.GetMachineAsync(getMachineRequest, cancellationToken)
                 .ConfigureAwait(false);
-            if (!getMachineResponse.IsFound)
+            if (!getMachineResponse.IsT0)
             {
                 throw new InvalidOperationException();
             }
 
-            var sourceMachine = getMachineResponse.MachineDetails;
+            var sourceMachine = getMachineResponse.AsT0.MachineDetails;
             var updatedMachine = new Machine(
                 sourceMachine.Id,
                 sourceMachine.Code,

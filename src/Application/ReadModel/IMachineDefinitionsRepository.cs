@@ -5,17 +5,20 @@
 
     using MicroDotNet.Services.StateMachines.Application.ReadModel.MachineDefinitions;
 
+    using OneOf;
+    using OneOf.Types;
+
     public interface IMachineDefinitionsRepository
     {
-        Task<CreateMachineDefinitionResponse> CreateMachineDefinitionAsync(
+        Task<OneOf<CreateMachineDefinitionResponse, Error>> CreateMachineDefinitionAsync(
             CreateMachineDefinitionRequest request,
             CancellationToken cancellationToken);
 
-        Task<GetMachineDefinitionResponse> GetMachineDefinitionAsync(
+        Task<OneOf<GetMachineDefinitionResponse, Error>> GetMachineDefinitionAsync(
             GetMachineDefinitionRequest request,
             CancellationToken cancellationToken);
 
-        Task<UpdateMachineDefinitionResponse> UpdateMachineDefinitionAsync(
+        Task<OneOf<UpdateMachineDefinitionResponse, Error>> UpdateMachineDefinitionAsync(
             UpdateMachineDefinitionRequest request,
             CancellationToken cancellationToken);
     }

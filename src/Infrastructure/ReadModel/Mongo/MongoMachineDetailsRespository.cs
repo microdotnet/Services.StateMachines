@@ -9,6 +9,9 @@ using MicroDotNet.Services.StateMachines.Infrastructure.ReadModel.Mongo.MachineD
 
 using MongoDB.Driver;
 
+using OneOf;
+using OneOf.Types;
+
 public sealed class MongoMachineDetailsRespository : MongoCollectionRepositoryBase<MachineDetailsDto, string>, IMachineDetailsRepository
 {
     private readonly ICollectionProvider collectionProvider;
@@ -18,7 +21,7 @@ public sealed class MongoMachineDetailsRespository : MongoCollectionRepositoryBa
         this.collectionProvider = collectionProvider ?? throw new ArgumentNullException(nameof(collectionProvider));
     }
 
-    public async Task<CreateMachineResponse> CreateMachineAsync(CreateMachineRequest request, CancellationToken cancellationToken)
+    public async Task<OneOf<CreateMachineResponse, Error>> CreateMachineAsync(CreateMachineRequest request, CancellationToken cancellationToken)
     {
         var payload = new MachineDetailsDto()
         {
@@ -31,16 +34,16 @@ public sealed class MongoMachineDetailsRespository : MongoCollectionRepositoryBa
 
         await this.CreateItemAsync(payload, cancellationToken)
             .ConfigureAwait(false);
-        return new(CreateMachineResponse.Result.Created);
+        return new CreateMachineResponse(CreateMachineResponse.Result.Created);
     }
 
-    public async Task<GetMachineResponse> GetMachineAsync(GetMachineRequest request, CancellationToken cancellationToken)
+    public async Task<OneOf<GetMachineResponse, Error>> GetMachineAsync(GetMachineRequest request, CancellationToken cancellationToken)
     {
         var item = await this.GetItemAsync(request.Code, cancellationToken)
             .ConfigureAwait(false);
         if (item is null)
         {
-            return GetMachineResponse.NotFound();
+            return new Error();
         }
 
         var result = new Machine(
@@ -49,16 +52,16 @@ public sealed class MongoMachineDetailsRespository : MongoCollectionRepositoryBa
             item.Name,
             item.Description,
             item.Versions);
-        return GetMachineResponse.Found(result);
+        return new GetMachineResponse(result);
     }
 
-    public async Task<UpdateMachineResponse> UpdateMachineAsync(UpdateMachineRequest request, CancellationToken cancellationToken)
+    public async Task<OneOf<UpdateMachineResponse, Error>> UpdateMachineAsync(UpdateMachineRequest request, CancellationToken cancellationToken)
     {
         var item = await this.GetItemAsync(request.Machine.Code, cancellationToken)
             .ConfigureAwait(false);
         if (item is null)
         {
-            return new UpdateMachineResponse(UpdateMachineResponse.Result.None);
+            return new Error();
         }
 
         item.Name = request.Machine.Name;
@@ -69,7 +72,7 @@ public sealed class MongoMachineDetailsRespository : MongoCollectionRepositoryBa
             item.Code,
             cancellationToken)
             .ConfigureAwait(false);
-        return new UpdateMachineResponse(UpdateMachineResponse.Result.Updated);
+        return new UpdateMachineResponse();
     }
 
     protected override FilterDefinition<MachineDetailsDto> FilterById(FilterDefinitionBuilder<MachineDetailsDto> filterDefinitionBuilder, string id)

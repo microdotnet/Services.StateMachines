@@ -32,12 +32,12 @@
                 getMachineRequest,
                 cancellationToken)
                 .ConfigureAwait(false);
-            if (getMachineResponse == null)
+            if (getMachineResponse.IsT1)
             {
                 throw new InvalidOperationException();
             }
 
-            var currentDefinition = getMachineResponse.Machine;
+            var currentDefinition = getMachineResponse.AsT0.Machine;
             var newDefinition = new MachineDefinition(
                 currentDefinition.Id,
                 currentDefinition.Code,

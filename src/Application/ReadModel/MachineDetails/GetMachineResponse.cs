@@ -4,30 +4,11 @@
 
     public sealed class GetMachineResponse
     {
-        private Machine? machineDetails;
-
-        private GetMachineResponse(Machine? machineDetails)
+        public GetMachineResponse(Machine machineDetails)
         {
-            this.machineDetails = machineDetails;
+            this.MachineDetails = machineDetails;
         }
 
-        public Machine MachineDetails
-        {
-            get
-            {
-                if (this.machineDetails is null)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                return this.machineDetails;
-            }
-        }
-
-        public bool IsFound => !(this.machineDetails is null);
-
-        public static GetMachineResponse Found(Machine machine) => new GetMachineResponse(machine);
-
-        public static GetMachineResponse NotFound() => new GetMachineResponse(null);
+        public Machine MachineDetails { get; }
     }
 }
