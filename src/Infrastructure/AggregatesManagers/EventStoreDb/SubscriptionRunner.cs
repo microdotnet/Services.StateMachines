@@ -110,7 +110,7 @@
                     e);
 
                 // if you're fine with dropping some events instead of stopping subscription
-                // then you can add some logic if error should be ignored
+                // then you can add some logic if error should be ignoredDefaultCollectionProvider
                 throw;
             }
         }

@@ -6,5 +6,20 @@ using MongoDB.Driver;
 
 public sealed class DefaultCollectionProvider : ICollectionProvider
 {
-    public IMongoCollection<MachineDetailsDto> Machines => throw new NotImplementedException();
+    private const string MachinesCollectionName = "Machines";
+
+    private readonly IDatabaseProvider databaseProvider;
+
+    public DefaultCollectionProvider(IDatabaseProvider databaseProvider)
+    {
+        this.databaseProvider = databaseProvider ?? throw new System.ArgumentNullException(nameof(databaseProvider));
+    }
+
+    public IMongoCollection<MachineDetailsDto> Machines => this.GetCollection<MachineDetailsDto>(MachinesCollectionName);
+
+    private IMongoCollection<T> GetCollection<T>(string collectionName)
+    {
+        var database = this.databaseProvider.GetDatabase("ReadDB", "StateMachines");
+        return database.GetCollection<T>(collectionName);
+    }
 }

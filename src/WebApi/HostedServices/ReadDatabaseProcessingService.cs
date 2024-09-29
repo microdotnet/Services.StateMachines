@@ -45,10 +45,10 @@
             else
             {
                 this.logger.MaterializationEventHandlerNotFound(e.Data.GetType());
-                var message = string.Format(
-                    ReadDatabaseProcessingServiceResources.MaterializationEventHandlerNotFound,
-                    e.Data.GetType());
-                throw new InvalidOperationException(message);
+                ////var message = string.Format(
+                ////    ReadDatabaseProcessingServiceResources.MaterializationEventHandlerNotFound,
+                ////    e.Data.GetType());
+                ////throw new InvalidOperationException(message);
             }
         }
     }

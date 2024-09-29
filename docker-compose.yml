@@ -29,6 +29,37 @@ services:
               source: eventstore-logs
               target: /var/log/eventstore
 
+    local.microdotnet.services.statemachines.mongo:
+        container_name: local.microdotnet.services.statemachines.mongo
+        hostname: local.microdotnet.services.statemachines.mongo
+        image: mongo
+        restart: always
+        networks:
+            - local.microdotnet.services.statemachines
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: Pa55VV0RD
+        ports:
+            - 10003:27017
+        volumes:
+            - mongo-configdb:/data/configdb
+            - mongo-volume:/data/db
+
+    local.microdotnet.services.statemachines.mongoexpress:
+        container_name: local.microdotnet.services.statemachines.mongoexpress
+        hostname: local.microdotnet.services.statemachines.mongoexpress
+        image: mongo-express
+        restart: always
+        networks:
+            - local.microdotnet.services.statemachines
+        environment:
+            ME_CONFIG_MONGODB_ADMINUSERNAME: root
+            ME_CONFIG_MONGODB_ADMINPASSWORD: Pa55VV0RD
+            ME_CONFIG_MONGODB_URL: mongodb://root:Pa55VV0RD@local.microdotnet.services.statemachines.mongo:27017
+        ports:
+            - 10004:8081
+        depends_on:
+            - local.microdotnet.services.statemachines.mongo
 networks:
     local.microdotnet.services.statemachines:
         driver: bridge
@@ -36,3 +67,5 @@ networks:
 volumes:
     eventstore-data:
     eventstore-logs:
+    mongo-configdb:
+    mongo-volume:
