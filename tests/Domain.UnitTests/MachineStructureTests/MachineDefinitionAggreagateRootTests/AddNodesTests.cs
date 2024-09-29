@@ -6,7 +6,7 @@
     using FluentAssertions;
 
     using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
-    using MicroDotNet.Services.StateMachines.Domain.MachineStructure.MachineDefinitionEvents;
+    using MicroDotNet.Services.StateMachines.Domain.MachineStructure.Events;
 
     using TestStack.BDDfy;
 
@@ -58,7 +58,7 @@
         private void EventIsAdded()
         {
             this.ReadEvents();
-            this.eventsObserved.OfType<MachineNodesAdded>()
+            this.eventsObserved.OfType<NodesAdded>()
                 .Should()
                 .NotBeEmpty()
                 .And.HaveCount(1);
@@ -68,7 +68,7 @@
         {
             this.ReadEvents();
             var nodesAddedEvent = this.eventsObserved
-                .OfType<MachineNodesAdded>()
+                .OfType<NodesAdded>()
                 .Single();
             nodesAddedEvent.Nodes.Should()
                 .Contain(nodeFinder, message);

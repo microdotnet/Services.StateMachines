@@ -5,7 +5,7 @@
     using FluentAssertions;
 
     using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
-    using MicroDotNet.Services.StateMachines.Domain.MachineStructure.MachineDefinitionEvents;
+    using MicroDotNet.Services.StateMachines.Domain.MachineStructure.Events;
 
     using TestStack.BDDfy;
 

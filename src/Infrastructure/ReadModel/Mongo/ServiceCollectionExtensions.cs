@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICollectionProvider, DefaultCollectionProvider>();
 
         services.AddTransient<IMachineDetailsRepository, MongoMachineDetailsRespository>();
+        services.AddTransient<IMachineDefinitionsRepository, MongoMachineDefinitionsRepository>();
 
         return services;
     }

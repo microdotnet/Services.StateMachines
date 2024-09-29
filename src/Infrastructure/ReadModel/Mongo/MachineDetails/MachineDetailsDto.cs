@@ -1,7 +1,5 @@
 ﻿namespace MicroDotNet.Services.StateMachines.Infrastructure.ReadModel.Mongo.MachineDetails;
 
-using System.Collections.ObjectModel;
-
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 

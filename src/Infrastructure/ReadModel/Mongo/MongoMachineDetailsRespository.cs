@@ -52,9 +52,38 @@ public sealed class MongoMachineDetailsRespository : MongoCollectionRepositoryBa
         return GetMachineResponse.Found(result);
     }
 
+    public async Task<UpdateMachineResponse> UpdateMachineAsync(UpdateMachineRequest request, CancellationToken cancellationToken)
+    {
+        var item = await this.GetItemAsync(request.Machine.Code, cancellationToken)
+            .ConfigureAwait(false);
+        if (item is null)
+        {
+            return new UpdateMachineResponse(UpdateMachineResponse.Result.None);
+        }
+
+        item.Name = request.Machine.Name;
+        item.Description = request.Machine.Description;
+        item.Versions = [.. request.Machine.Versions];
+        await this.UpdateItemAsync(
+            item,
+            item.Code,
+            cancellationToken)
+            .ConfigureAwait(false);
+        return new UpdateMachineResponse(UpdateMachineResponse.Result.Updated);
+    }
+
     protected override FilterDefinition<MachineDetailsDto> FilterById(FilterDefinitionBuilder<MachineDetailsDto> filterDefinitionBuilder, string id)
     {
         return filterDefinitionBuilder.Eq(i => i.Code, id);
+    }
+
+    protected override UpdateDefinition<MachineDetailsDto> CreateUpdateDefinition(MachineDetailsDto payload)
+    {
+        var update = Builders<MachineDetailsDto>.Update
+            .Set(r => r.Name, payload.Name)
+            .Set(r => r.Description, payload.Description)
+            .Set(r => r.Versions, payload.Versions);
+        return update;
     }
 
     protected override IMongoCollection<MachineDetailsDto> GetCollection()

@@ -1,8 +1,8 @@
 ﻿namespace MicroDotNet.Services.StateMachines.Application.ReadModel.MachineDetails
 {
-    public sealed class CreateMachineResponse
+    public sealed class UpdateMachineResponse
     {
-        public CreateMachineResponse(Result creationResult)
+        public UpdateMachineResponse(Result creationResult)
         {
             this.CreationResult = creationResult;
         }
@@ -13,7 +13,7 @@
         {
             None = 0,
 
-            Created = 1,
+            Updated = 1,
         }
     }
 }

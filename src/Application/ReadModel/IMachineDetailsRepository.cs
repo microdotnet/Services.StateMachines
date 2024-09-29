@@ -14,5 +14,9 @@
         public Task<GetMachineResponse> GetMachineAsync(
             GetMachineRequest request,
             CancellationToken cancellationToken);
+
+        public Task<UpdateMachineResponse> UpdateMachineAsync(
+            UpdateMachineRequest request,
+            CancellationToken cancellationToken);
     }
 }

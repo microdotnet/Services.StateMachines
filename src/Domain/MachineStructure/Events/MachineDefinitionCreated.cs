@@ -1,4 +1,4 @@
-﻿namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure.MachineDefinitionEvents
+﻿namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure.Events
 {
     using System;
 

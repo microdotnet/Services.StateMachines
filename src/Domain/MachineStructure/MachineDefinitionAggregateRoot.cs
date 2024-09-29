@@ -5,7 +5,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    using MicroDotNet.Services.StateMachines.Domain.MachineStructure.MachineDefinitionEvents;
+    using MicroDotNet.Services.StateMachines.Domain.MachineStructure.Events;
 
     public sealed class MachineDefinitionAggregateRoot : AggregateRootBase
     {
@@ -66,7 +66,7 @@
                     nameof(nodes));
             }
 
-            var @event = new MachineNodesAdded(this.MachineName, nodes);
+            var @event = new NodesAdded(this.MachineName, nodes);
             this.Enqueue(@event);
             this.Apply(@event);
         }
@@ -142,7 +142,7 @@
                 case MachineDefinitionCreated created:
                     this.Apply(created);
                     break;
-                case MachineNodesAdded nodesAdded:
+                case NodesAdded nodesAdded:
                     this.Apply(nodesAdded);
                     break;
                 case TransitionAdded transitionAdded:
@@ -162,7 +162,7 @@
             this.MachineName = @event.MachineName;
         }
 
-        private void Apply(MachineNodesAdded @event)
+        private void Apply(NodesAdded @event)
         {
             foreach (var node in @event.Nodes)
             {

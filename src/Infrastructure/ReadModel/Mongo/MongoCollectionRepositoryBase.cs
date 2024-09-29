@@ -19,6 +19,19 @@ public abstract class MongoCollectionRepositoryBase<TPayload, TId>
             .ConfigureAwait(false);
     }
 
+    protected async Task UpdateItemAsync(TPayload item, TId id, CancellationToken cancellationToken)
+    {
+        var filterBuilder = Builders<TPayload>.Filter;
+        var filter = this.FilterById(filterBuilder, id);
+        var collection = this.GetCollection();
+        await collection.UpdateOneAsync(
+            filter,
+            this.CreateUpdateDefinition(item),
+            null,
+            cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     protected async Task<TPayload?> GetItemAsync(TId itemId, CancellationToken cancellationToken)
     {
         var collection = this.GetCollection();
@@ -47,4 +60,6 @@ public abstract class MongoCollectionRepositoryBase<TPayload, TId>
     protected abstract FilterDefinition<TPayload> FilterById(
         FilterDefinitionBuilder<TPayload> filterDefinitionBuilder,
         TId id);
+
+    protected abstract UpdateDefinition<TPayload> CreateUpdateDefinition(TPayload payload);
 }

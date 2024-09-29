@@ -1,8 +1,8 @@
-﻿namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure.MachineDefinitionEvents
+﻿namespace MicroDotNet.Services.StateMachines.Domain.MachineStructure.Events
 {
-    public sealed class MachineNodesAdded : MachineDefinitionEventBase
+    public sealed class NodesAdded : MachineDefinitionEventBase
     {
-        public MachineNodesAdded(
+        public NodesAdded(
             MachineName machineName,
             Node[] nodes)
             : base(machineName)
