@@ -125,16 +125,23 @@
                 return;
             }
 
+            if (exception is RpcException rpcException)
+            {
+                this.logger.SubscriptionDroppedWithError(
+                    subscriptionName,
+                    rpcException.StatusCode,
+                    reason,
+                    exception);
+
+                return;
+            }
+
             if (exception is OperationCanceledException)
             {
                 return;
             }
 
-            this.logger.SubscriptionDroppedWithError(
-                subscriptionName,
-                (exception as RpcException)?.StatusCode ?? StatusCode.Unknown,
-                reason,
-                exception);
+            this.logger.ConnectionDropped(exception);
 
             this.Resubscribe(subscriptionName, CancellationToken.None);
         }

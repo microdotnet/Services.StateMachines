@@ -78,5 +78,14 @@
             Message = "Checkpoint event - ignoring")]
         public static partial void CheckpointEventFound(
             this ILogger<SubscriptionRunner> logger);
+
+        [LoggerMessage(
+            LogLevel.Warning,
+            EventId = 8,
+            EventName = nameof(ConnectionDropped),
+            Message = "Connection was dropped due to exception. Resubscribing.")]
+        public static partial void ConnectionDropped(
+            this ILogger<SubscriptionRunner> logger,
+            Exception? ex);
     }
 }

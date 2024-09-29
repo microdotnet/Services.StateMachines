@@ -2,6 +2,7 @@
 
 using Autofac.Extensions.DependencyInjection;
 
+using MicroDotNet.Services.StateMachines.Application.EventsMaterialization.EventHandlers;
 using MicroDotNet.Services.StateMachines.Infrastructure.AggregatesManagers.EventStoreDb;
 using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
 
@@ -50,6 +51,7 @@ public static class ApplicationBuilderExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddHostedService<HostedServices.ReadDatabaseProcessingService>();
+        services.AddMaterializationEventHandlers();
         ////services.AddGrpc();
         ////services.Configure<QueueRepositorySettings>(configuration.GetSection("QueueRepository"));
         ////services.Configure<DocumentGeneratorSettings>(configuration.GetSection("DocumentGenerator"));

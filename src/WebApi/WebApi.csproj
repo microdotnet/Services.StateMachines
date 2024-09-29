@@ -20,4 +20,19 @@
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="HostedServices\ReadDatabaseProcessingServiceResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ReadDatabaseProcessingServiceResources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="HostedServices\ReadDatabaseProcessingServiceResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ReadDatabaseProcessingServiceResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
