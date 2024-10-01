@@ -30,6 +30,7 @@
             var request = new CreateSubscriptionRequest(
                 "ReadDatabaseProcessing",
                 this.HandleEvent);
+            this.logger.LogError("STARTING SUBSCRIPTION FOR READ MODEL PROCESSING");
             return this.eventsMaterializationProvider.CreateSubscriptionAsync(
                 request,
                 stoppingToken);

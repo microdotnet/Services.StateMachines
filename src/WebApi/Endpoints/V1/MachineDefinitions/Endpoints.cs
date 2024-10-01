@@ -1,6 +1,8 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
 using MicroDotNet.Services.StateMachines.Application.AggregatesManager;
+using MicroDotNet.Services.StateMachines.Application.ReadModel;
+using MicroDotNet.Services.StateMachines.Application.ReadModel.MachineDetails;
 using MicroDotNet.Services.StateMachines.Domain;
 using MicroDotNet.Services.StateMachines.Domain.MachineDetails;
 using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
@@ -14,7 +16,8 @@ public static class Endpoints
     public static async Task<IResult> Create(
         LinkGenerator linkGenerator,
         IAggregatesRepository<MachineDetailsAggregateRoot> aggregatesRepository,
-        CreateInput payload)
+        CreateInput payload,
+        CancellationToken cancellationToken)
     {
         var id = Guid.NewGuid();
         var machineAggregate = MachineDetailsAggregateRoot.Create(
@@ -22,7 +25,7 @@ public static class Endpoints
             payload.Code,
             payload.Name,
             payload.Description);
-        await aggregatesRepository.AddAsync(machineAggregate, CancellationToken.None)
+        await aggregatesRepository.AddAsync(machineAggregate, cancellationToken)
             .ConfigureAwait(false);
         var link = linkGenerator.GetPathByName(
             GetMachineEndpointName,
@@ -31,10 +34,30 @@ public static class Endpoints
         return Results.Created(link, output);
     }
 
-    public static IResult Get(
-        string code)
+    public static async Task<IResult> Get(
+        IMachineDetailsRepository machineDetailsRepository,
+        string code,
+        CancellationToken cancellationToken)
     {
-        return Results.Problem();
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            return Results.NotFound();
+        }
+
+        var machineDetails = await machineDetailsRepository.GetMachineAsync(
+            new GetMachineRequest(code),
+            cancellationToken)
+            .ConfigureAwait(false);
+        return machineDetails.Match(
+            r =>
+            {
+                var output = new GetOutput(
+                    r.MachineDetails.Code,
+                    r.MachineDetails.Name,
+                    r.MachineDetails.Description);
+                return Results.Ok(output);
+            },
+            _ => Results.NotFound());
     }
 
     public static void MapEndpoints(WebApplication app)
