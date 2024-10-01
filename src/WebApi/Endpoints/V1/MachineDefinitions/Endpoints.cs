@@ -1,5 +1,7 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
 
+using System.Diagnostics.Metrics;
+
 using MicroDotNet.Services.StateMachines.Application.AggregatesManager;
 using MicroDotNet.Services.StateMachines.Domain;
 using MicroDotNet.Services.StateMachines.Domain.MachineDetails;
@@ -14,21 +16,30 @@ public static class Endpoints
     public static async Task<IResult> Create(
         LinkGenerator linkGenerator,
         IAggregatesRepository<MachineDetailsAggregateRoot> aggregatesRepository,
+        MachineDefinitionsMetrics metrics,
         CreateInput payload)
     {
-        var id = Guid.NewGuid();
-        var machineAggregate = MachineDetailsAggregateRoot.Create(
-            id,
-            payload.Code,
-            payload.Name,
-            payload.Description);
-        await aggregatesRepository.AddAsync(machineAggregate, CancellationToken.None)
-            .ConfigureAwait(false);
-        var link = linkGenerator.GetPathByName(
-            GetMachineEndpointName,
-            values: new { code = payload.Code });
-        var output = new CreateOutput(id);
-        return Results.Created(link, output);
+        using var _ = metrics.MeasureMachineCreationDuration();
+        try
+        {
+            var id = Guid.NewGuid();
+            var machineAggregate = MachineDetailsAggregateRoot.Create(
+                id,
+                payload.Code,
+                payload.Name,
+                payload.Description);
+            await aggregatesRepository.AddAsync(machineAggregate, CancellationToken.None)
+                .ConfigureAwait(false);
+            var link = linkGenerator.GetPathByName(
+                GetMachineEndpointName,
+                values: new { code = payload.Code });
+            var output = new CreateOutput(id);
+            return Results.Created(link, output);
+        }
+        finally
+        {
+            metrics.IncreaseMachineCreationCount();
+        }
     }
 
     public static IResult Get(

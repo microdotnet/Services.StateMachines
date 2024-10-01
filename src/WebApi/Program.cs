@@ -4,9 +4,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.SetupLogging();
 builder.Host.BuildConfiguration();
-builder.Host.SetupContainer(builder.Configuration);
+builder.Host.SetupContainer();
 
 builder.Services.ConfigureServices(builder.Configuration);
+
+builder.AddOpenTelemetry();
 
 var app = builder.Build();
 

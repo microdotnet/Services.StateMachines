@@ -6,6 +6,13 @@ using MicroDotNet.Services.StateMachines.Application.EventsMaterialization.Event
 using MicroDotNet.Services.StateMachines.Infrastructure.AggregatesManagers.EventStoreDb;
 using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
 
+using Microsoft.Extensions.Hosting;
+
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
 public static class ApplicationBuilderExtensions
 {
     public static IHostBuilder SetupLogging(
@@ -36,14 +43,39 @@ public static class ApplicationBuilderExtensions
     }
 
     public static IHostBuilder SetupContainer(
-        this IHostBuilder hostBuilder,
-        IConfiguration configuration)
+        this IHostBuilder hostBuilder)
     {
-        hostBuilder.ConfigureServices(sc => sc.StoreMachinesInEventStoreDb());
         hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         ////    new ContainerServiceProviderFactory<AutofacContainerBuilder, AutofacResolutionScope>());
         ////hostBuilder.ConfigureContainer<IModule>(module => module.AddModule(new WebApiModule(configuration)));
         return hostBuilder;
+    }
+
+    public static void AddOpenTelemetry(this WebApplicationBuilder builder)
+    {
+        var resourceBuilder = ResourceBuilder.CreateDefault()
+            .AddService(serviceName: "statemachines.api", serviceVersion: "1.0.0");
+
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(tracing => tracing
+                .SetResourceBuilder(resourceBuilder)
+                .AddSource("HelloOpenTelemetry")
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddConsoleExporter()
+            )
+            .WithMetrics(metrics => metrics
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddConsoleExporter()
+                .AddMeter(
+                        "Microsoft.AspNetCore.Hosting",
+                        "Microsoft.AspNetCore.Server.Kestrel",
+                        "System.Net.Http",
+                        Endpoints.V1.MachineDefinitions.MachineDefinitionsMetrics.MeterName)
+            );
+
+        builder.Logging.AddOpenTelemetry(logging => { logging.AddConsoleExporter(); });
     }
 
     public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
@@ -52,30 +84,21 @@ public static class ApplicationBuilderExtensions
         services.AddSwaggerGen();
         services.AddHostedService<HostedServices.ReadDatabaseProcessingService>();
         services.AddMaterializationEventHandlers();
-        ////services.AddGrpc();
-        ////services.Configure<QueueRepositorySettings>(configuration.GetSection("QueueRepository"));
-        ////services.Configure<DocumentGeneratorSettings>(configuration.GetSection("DocumentGenerator"));
-        ////services.Configure<RabbitMq.RawRabbitMqSettings>(configuration.GetSection("RabbitMq"));
-        ////services.Configure<InternalServicesEndpoints>(configuration.GetSection("InternalServices"));
-        ////services.AddHostedService<HostedServices.EventsProcessor>();
-        ////services.AddHostedService<HostedServices.DocumentsGenerator>();
-
-        ////services.AddGrpcClient<UsersManagement.UsersManagementClient>((serviceProvider, options) =>
-        ////{
-        ////    var addresses = serviceProvider.GetRequiredService<IOptions<InternalServicesEndpoints>>().Value;
-        ////    options.Address = new(addresses.Users);
-        ////});
+        services.AddSingleton<Endpoints.V1.MachineDefinitions.MachineDefinitionsMetrics>();
+        services.AddMetrics();
+        services.StoreMachinesInEventStoreDb();
     }
 
     public static void ConfigureApplication(this WebApplication app)
     {
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        ////if (app.Environment.IsDevelopment())
+        ////{
+        app.UseSwagger();
+        app.UseSwaggerUI();
+        ////}
 
         app.MapSwagger();
+        ////app.UseOpenTelemetryPrometheusScrapingEndpoint();
         app.MapEndpoints();
     }
 
