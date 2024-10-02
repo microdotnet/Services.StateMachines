@@ -8,6 +8,7 @@ using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
 
 using Microsoft.Extensions.Hosting;
 
+using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -59,12 +60,12 @@ public static class ApplicationBuilderExtensions
         builder.Services.AddOpenTelemetry()
             .WithTracing(tracing => tracing
                 .SetResourceBuilder(resourceBuilder)
-                .AddSource("HelloOpenTelemetry")
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddConsoleExporter()
             )
             .WithMetrics(metrics => metrics
+                .SetResourceBuilder(resourceBuilder)
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddConsoleExporter()
@@ -74,8 +75,6 @@ public static class ApplicationBuilderExtensions
                         "System.Net.Http",
                         Endpoints.V1.MachineDefinitions.MachineDefinitionsMetrics.MeterName)
             );
-
-        builder.Logging.AddOpenTelemetry(logging => { logging.AddConsoleExporter(); });
     }
 
     public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)

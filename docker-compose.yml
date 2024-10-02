@@ -61,6 +61,54 @@ services:
         depends_on:
             - local.microdotnet.services.statemachines.mongo
 
+    local.microdotnet.services.statemachines.elasticsearch:
+        container_name: local.microdotnet.services.statemachines.elasticsearch
+        hostname: local.microdotnet.services.statemachines.elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
+        environment:
+            - discovery.type=single-node
+            - ES_JAVA_OPTS=-Xms1g -Xmx1g
+            - discovery.type=single-node
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+            - esdata:/usr/share/elasticsearch/data
+            - ./docker/certs:/usr/share/elasticsearch/config/certs  # Add your certs here
+        ports:
+            - 10005:9200
+        networks:
+            - local.microdotnet.services.statemachines
+
+    local.microdotnet.services.statemachines.logstash:
+        container_name: local.microdotnet.services.statemachines.logstash
+        hostname: local.microdotnet.services.statemachines.logstash
+        image: docker.elastic.co/logstash/logstash:8.15.2
+        volumes:
+            - ./docker/logstash/pipeline:/usr/share/logstash/pipeline
+        environment:
+            LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+        ports:
+            - 10006:5000
+        networks:
+            - local.microdotnet.services.statemachines
+        depends_on:
+            - local.microdotnet.services.statemachines.elasticsearch
+
+    local.microdotnet.services.statemachines.kibana:
+        container_name: local.microdotnet.services.statemachines.kibana
+        hostname: local.microdotnet.services.statemachines.kibana
+        image: docker.elastic.co/kibana/kibana:8.15.2
+        environment:
+            ELASTICSEARCH_HOSTS: https://local.microdotnet.services.statemachines.elasticsearch:9200
+        ports:
+            - 10007:5601
+        networks:
+            - local.microdotnet.services.statemachines
+        depends_on:
+            - local.microdotnet.services.statemachines.elasticsearch
+
     # local.microdotnet.services.statemachines.webapi:
         # container_name: local.microdotnet.services.statemachines.webapi
         # hostname: local.microdotnet.services.statemachines.webapi
@@ -87,3 +135,4 @@ volumes:
     eventstore-logs:
     mongo-configdb:
     mongo-volume:
+    esdata:
