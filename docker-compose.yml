@@ -69,13 +69,26 @@ services:
             - discovery.type=single-node
             - ES_JAVA_OPTS=-Xms1g -Xmx1g
             - discovery.type=single-node
+            - xpack.security.enabled=true
+            - xpack.security.http.ssl.enabled=true
+            - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/statemachines.elasticsearch.pkcs8.pem
+            - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/intermediate.crt
+            - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/statemachines.elasticsearch.crt
+            - xpack.security.transport.ssl.enabled=true
+            - xpack.security.transport.ssl.verification_mode=certificate 
+            - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certs/statemachines.elasticsearch.pkcs8.pem
+            - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/intermediate.crt
+            - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certs/statemachines.elasticsearch.crt
+            - ELASTIC_PASSWORD=password
         ulimits:
             memlock:
                 soft: -1
                 hard: -1
         volumes:
             - esdata:/usr/share/elasticsearch/data
-            - ./docker/certs:/usr/share/elasticsearch/config/certs  # Add your certs here
+            - .\docker\certificates:/usr/share/elasticsearch/config/certs  # Add your certs here
+            - .\docker\certificates\intermediate.crt:/usr/local/share/ca-certificates/MicroDotNet-IntermediateCA.crt
+            - .\docker\certificates\ca.crt:/usr/local/share/ca-certificates/MicroDotNet-RootCA.crt
         ports:
             - 10005:9200
         networks:
@@ -87,10 +100,12 @@ services:
         image: docker.elastic.co/logstash/logstash:8.15.2
         volumes:
             - ./docker/logstash/pipeline:/usr/share/logstash/pipeline
+            - .\docker\certificates\intermediate.crt:/usr/local/share/ca-certificates/MicroDotNet-IntermediateCA.crt
+            - .\docker\certificates\ca.crt:/usr/local/share/ca-certificates/MicroDotNet-RootCA.crt
         environment:
             LS_JAVA_OPTS: "-Xmx256m -Xms256m"
         ports:
-            - 10006:5000
+            - 10006:9600
         networks:
             - local.microdotnet.services.statemachines
         depends_on:
