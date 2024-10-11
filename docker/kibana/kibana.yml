@@ -1,0 +1,12 @@
+#
+# ** THIS IS AN AUTO-GENERATED FILE **
+#
+
+# Default Kibana configuration for docker target
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: [ "https://local.microdotnet.services.statemachines.elasticsearch:9200" ]
+elasticsearch.serviceAccountToken: "AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS10b2tlbjpxUGxYY1czS1NZS0FGRmxWbTNZV0JR"
+monitoring.ui.container.elasticsearch.enabled: true
+server.ssl.certificateAuthorities: ["/etc/kibana/certs/MicroDotNet-RootCA.crt", "/etc/kibana/certs/MicroDotNet-IntermediateCA.crt" ]
+elasticsearch.ssl.certificateAuthorities: ["/etc/kibana/certs/MicroDotNet-RootCA.crt", "/etc/kibana/certs/MicroDotNet-IntermediateCA.crt" ]

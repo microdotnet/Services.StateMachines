@@ -99,7 +99,7 @@ services:
         hostname: local.microdotnet.services.statemachines.logstash
         image: docker.elastic.co/logstash/logstash:8.15.2
         volumes:
-            - ./docker/logstash/pipeline:/usr/share/logstash/pipeline
+            - .\docker\logstash\pipeline:/usr/share/logstash/pipeline
             - .\docker\certificates\intermediate.crt:/usr/local/share/ca-certificates/MicroDotNet-IntermediateCA.crt
             - .\docker\certificates\ca.crt:/usr/local/share/ca-certificates/MicroDotNet-RootCA.crt
         environment:
@@ -117,6 +117,10 @@ services:
         image: docker.elastic.co/kibana/kibana:8.15.2
         environment:
             ELASTICSEARCH_HOSTS: https://local.microdotnet.services.statemachines.elasticsearch:9200
+        volumes:
+            - .\docker\kibana\kibana.yml:/usr/share/kibana/config/kibana.yml
+            - .\docker\certificates\intermediate.crt:/etc/kibana/certs/MicroDotNet-IntermediateCA.crt
+            - .\docker\certificates\ca.crt:/etc/kibana/certs/MicroDotNet-RootCA.crt
         ports:
             - 10007:5601
         networks:
@@ -124,22 +128,22 @@ services:
         depends_on:
             - local.microdotnet.services.statemachines.elasticsearch
 
-    # local.microdotnet.services.statemachines.webapi:
-        # container_name: local.microdotnet.services.statemachines.webapi
-        # hostname: local.microdotnet.services.statemachines.webapi
-        # image: microdotnet.services.statemachines:local
-        # restart: always
-        # environment:
-            # - ASPNETCORE_URLS=http://+:80
-            # - ConnectionStrings__EventsDB=esdb://local.microdotnet.services.statemachines.eventstore:2113/?tls=false
-            # - ConnectionStrings__ReadDB=mongodb://root:Pa55VV0RD@local.microdotnet.services.statemachines.mongo:27017
-        # networks:
-            # - local.microdotnet.services.statemachines
-        # ports:
-            # - 10007:80
-        # depends_on:
-            # - local.microdotnet.services.statemachines.eventstore
-            # - local.microdotnet.services.statemachines.mongo
+    local.microdotnet.services.statemachines.webapi:
+        container_name: local.microdotnet.services.statemachines.webapi
+        hostname: local.microdotnet.services.statemachines.webapi
+        image: microdotnet.services.statemachines:local
+        restart: always
+        environment:
+            - ASPNETCORE_URLS=http://+:80
+            - ConnectionStrings__EventsDB=esdb://local.microdotnet.services.statemachines.eventstore:2113/?tls=false
+            - ConnectionStrings__ReadDB=mongodb://root:Pa55VV0RD@local.microdotnet.services.statemachines.mongo:27017
+        networks:
+            - local.microdotnet.services.statemachines
+        ports:
+            - 10008:80
+        depends_on:
+            - local.microdotnet.services.statemachines.eventstore
+            - local.microdotnet.services.statemachines.mongo
 
 networks:
     local.microdotnet.services.statemachines:
