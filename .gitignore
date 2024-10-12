@@ -6,6 +6,7 @@
 docker/certificates
 .env
 docker/elasticsearch/service_tokens
+docker/kibana/kibana.yml
 
 # User-specific files
 *.rsuser

@@ -86,9 +86,9 @@ services:
                 hard: -1
         volumes:
             - esdata:/usr/share/elasticsearch/data
-            - .\docker\certificates:/usr/share/elasticsearch/config/certs  # Add your certs here
             - .\docker\certificates\intermediate.crt:/usr/local/share/ca-certificates/MicroDotNet-IntermediateCA.crt
             - .\docker\certificates\ca.crt:/usr/local/share/ca-certificates/MicroDotNet-RootCA.crt
+            - .\docker\elasticsearch\service_tokens:/usr/share/elasticsearch/config/service_tokens
         ports:
             - 10005:9200
         networks:
