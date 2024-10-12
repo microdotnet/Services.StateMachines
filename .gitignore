@@ -5,6 +5,7 @@
 
 docker/certificates
 .env
+docker/elasticsearch/service_tokens
 
 # User-specific files
 *.rsuser
