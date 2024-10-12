@@ -8,12 +8,6 @@ using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
 
 using Microsoft.Extensions.Hosting;
 
-using OpenTelemetry;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-
 public static class ApplicationBuilderExtensions
 {
     public static IHostBuilder SetupLogging(
@@ -52,32 +46,7 @@ public static class ApplicationBuilderExtensions
         return hostBuilder;
     }
 
-    public static void AddOpenTelemetry(this WebApplicationBuilder builder)
-    {
-        var resourceBuilder = ResourceBuilder.CreateDefault()
-            .AddService(serviceName: "statemachines.api", serviceVersion: "1.0.0");
-
-        builder.Services.AddOpenTelemetry()
-            .WithTracing(tracing => tracing
-                .SetResourceBuilder(resourceBuilder)
-                .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
-                .AddConsoleExporter()
-            )
-            .WithMetrics(metrics => metrics
-                .SetResourceBuilder(resourceBuilder)
-                .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
-                .AddConsoleExporter()
-                .AddMeter(
-                        "Microsoft.AspNetCore.Hosting",
-                        "Microsoft.AspNetCore.Server.Kestrel",
-                        "System.Net.Http",
-                        Endpoints.V1.MachineDefinitions.MachineDefinitionsMetrics.MeterName)
-            );
-    }
-
-    public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
+    public static void ConfigureServices(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();

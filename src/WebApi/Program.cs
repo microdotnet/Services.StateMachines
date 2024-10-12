@@ -6,9 +6,7 @@ builder.Host.SetupLogging();
 builder.Host.BuildConfiguration();
 builder.Host.SetupContainer();
 
-builder.Services.ConfigureServices(builder.Configuration);
-
-builder.AddOpenTelemetry();
+builder.Services.ConfigureServices();
 
 var app = builder.Build();
 
@@ -16,4 +14,7 @@ app.ConfigureApplication();
 
 app.Run();
 
-public sealed partial class WebApiProgram { }
+namespace MicroDotNet.Services.StateMachines.WebApi
+{
+    public sealed partial class WebApiProgram { }
+}

@@ -1,0 +1,1 @@
+docker build -t microdotnet.services.statemachines:local .
