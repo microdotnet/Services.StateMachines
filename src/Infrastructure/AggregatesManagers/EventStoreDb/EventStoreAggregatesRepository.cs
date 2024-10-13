@@ -1,6 +1,7 @@
 ﻿namespace MicroDotNet.Services.StateMachines.Infrastructure.AggregatesManagers.EventStoreDb;
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,24 +13,18 @@ using MicroDotNet.Services.StateMachines.Domain;
 public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepository<TAggregate>
     where TAggregate : class, IAggregate
 {
-    /// <summary>
-    /// <see cref="IEventStoreClientProvider"/> to use with this instance.
-    /// </summary>
     private readonly IEventStoreClientProvider eventStoreClientProvider;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EventStoreStreamsProvider{TAggregate}"/> class.
-    /// </summary>
-    /// <param name="eventStoreClientProvider"><see cref="IEventStoreClientProvider"/> to use with this instance.</param>
+    private readonly EventStoreActivities activities;
+
     public EventStoreAggregatesRepository(
-        IEventStoreClientProvider eventStoreClientProvider)
+        IEventStoreClientProvider eventStoreClientProvider,
+        EventStoreActivities activities)
     {
         this.eventStoreClientProvider = eventStoreClientProvider ?? throw new ArgumentNullException(nameof(eventStoreClientProvider));
+        this.activities = activities;
     }
 
-    /// <summary>
-    /// Gets <see cref="EventStoreClient"/> to use.
-    /// </summary>
     private EventStoreClient Client
     {
         get
@@ -45,26 +40,24 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
         }
     }
 
-    /// <inheritdoc/>
     public async Task<ulong> AddAsync(TAggregate aggregate, CancellationToken cancellationToken)
     {
+        using var _ = this.activities.StartAddingAggregate(aggregate);
         var result = await this.Client.AppendToStreamAsync(
             StreamNameMapper.ToStreamId<TAggregate>(aggregate.PublicIdentifier),
             StreamState.NoStream,
             GetEventsToStore(aggregate),
             cancellationToken: cancellationToken)
-        .ConfigureAwait(false);
+            .ConfigureAwait(false);
 
         return result.NextExpectedStreamRevision.ToUInt64();
     }
 
-    /// <inheritdoc/>
     public Task<ulong> DeleteAsync(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken)
     {
         return this.UpdateAsync(aggregate, expectedRevision, cancellationToken);
     }
 
-    /// <inheritdoc/>
     public async Task<TAggregate?> FindAsync(string publicIdentifier, CancellationToken cancellationToken)
     {
         return await this.Client.AggregateStream<TAggregate>(
@@ -74,7 +67,6 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc/>
     public async Task<ulong> UpdateAsync(TAggregate aggregate, ulong? expectedRevision, CancellationToken cancellationToken)
     {
         var eventsToAppend = GetEventsToStore(aggregate);

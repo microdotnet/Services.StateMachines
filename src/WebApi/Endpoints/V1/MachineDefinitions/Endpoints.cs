@@ -13,27 +13,25 @@ public static class Endpoints
 
     public const string GetMachineEndpointName = "V1_MachineDefinitions_Get";
 
-    public static async Task<IResult> Create(
+    public static async Task<IResult> CreateAsync(
         LinkGenerator linkGenerator,
-        IAggregatesRepository<MachineDetailsAggregateRoot> aggregatesRepository,
+        IMachineDefinitionsService machineDefinitionsService,
         MachineDefinitionsMetrics metrics,
-        CreateInput payload)
+        MachineDefinitionsActivities activities,
+        CreateInput payload,
+        CancellationToken cancellationToken)
     {
         using var _ = metrics.MeasureMachineCreationDuration();
+        using var __ = activities.StartMachineCreation();
         try
         {
-            var id = Guid.NewGuid();
-            var machineAggregate = MachineDetailsAggregateRoot.Create(
-                id,
-                payload.Code,
-                payload.Name,
-                payload.Description);
-            await aggregatesRepository.AddAsync(machineAggregate, CancellationToken.None)
+            var output = await machineDefinitionsService.CreateAsync(
+                payload,
+                cancellationToken)
                 .ConfigureAwait(false);
             var link = linkGenerator.GetPathByName(
                 GetMachineEndpointName,
                 values: new { code = payload.Code });
-            var output = new CreateOutput(id);
             return Results.Created(link, output);
         }
         finally
@@ -50,7 +48,7 @@ public static class Endpoints
 
     public static void MapEndpoints(WebApplication app)
     {
-        app.MapPost("/v1/machineDefinitions", Create)
+        app.MapPost("/v1/machineDefinitions", CreateAsync)
             .WithName(CreateMachineEndpointName)
             .WithOpenApi();
         app.MapGet("/v1/machineDefinitions/{code}", Get)

@@ -8,7 +8,6 @@ using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
 
 using Microsoft.Extensions.Hosting;
 
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -64,16 +63,20 @@ public static class ApplicationBuilderExtensions
                         .AddService(ServiceName))
                 .AddOtlpExporter();
         });
-        
+
         builder.Services.AddOpenTelemetry()
             .ConfigureResource(resource => resource.AddService(ServiceName))
             .WithTracing(tracing =>
                 tracing
                     .AddAspNetCoreInstrumentation()
+                    .AddEndpointsTraces()
+                    .AddEventStoreDbTraces()
                     .AddOtlpExporter())
             .WithMetrics(metrics =>
                 metrics
                     .AddAspNetCoreInstrumentation()
+                    .AddEndpointsV1Meters()
+                    .AddEventStoreDbMeters()
                     .AddOtlpExporter());
     }
 
@@ -83,9 +86,9 @@ public static class ApplicationBuilderExtensions
         services.AddSwaggerGen();
         services.AddHostedService<HostedServices.ReadDatabaseProcessingService>();
         services.AddMaterializationEventHandlers();
-        services.AddSingleton<Endpoints.V1.MachineDefinitions.MachineDefinitionsMetrics>();
         services.AddMetrics();
         services.StoreMachinesInEventStoreDb();
+        services.AddEndpointsRegistrations();
     }
 
     public static void ConfigureApplication(this WebApplication app)

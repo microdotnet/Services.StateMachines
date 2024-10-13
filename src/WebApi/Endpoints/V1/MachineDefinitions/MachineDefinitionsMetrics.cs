@@ -2,7 +2,7 @@
 
 using System.Diagnostics.Metrics;
 
-public class MachineDefinitionsMetrics
+public sealed class MachineDefinitionsMetrics
 {
     public const string MeterName = "MicroDotNet.StateMachines.Api.MachineDefintitions";
 
