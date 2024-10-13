@@ -8,8 +8,16 @@ using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
 
 using Microsoft.Extensions.Hosting;
 
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
 public static class ApplicationBuilderExtensions
 {
+    private const string ServiceName = "Services.StateMachines";
+
     public static IHostBuilder SetupLogging(
         this IHostBuilder hostBuilder)
     {
@@ -46,6 +54,29 @@ public static class ApplicationBuilderExtensions
         return hostBuilder;
     }
 
+    public static void AddOpenTelemetry(this WebApplicationBuilder builder)
+    {
+        builder.Logging.AddOpenTelemetry(options =>
+        {
+            options
+                .SetResourceBuilder(
+                    ResourceBuilder.CreateDefault()
+                        .AddService(ServiceName))
+                .AddOtlpExporter();
+        });
+        
+        builder.Services.AddOpenTelemetry()
+            .ConfigureResource(resource => resource.AddService(ServiceName))
+            .WithTracing(tracing =>
+                tracing
+                    .AddAspNetCoreInstrumentation()
+                    .AddOtlpExporter())
+            .WithMetrics(metrics =>
+                metrics
+                    .AddAspNetCoreInstrumentation()
+                    .AddOtlpExporter());
+    }
+
     public static void ConfigureServices(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
@@ -69,10 +100,4 @@ public static class ApplicationBuilderExtensions
         ////app.UseOpenTelemetryPrometheusScrapingEndpoint();
         app.MapEndpoints();
     }
-
-    ////private static void ConfigureLogger(this LoggerConfiguration cfg, IConfiguration configuration)
-    ////{
-    ////    cfg
-    ////        .ReadFrom.Configuration(configuration);
-    ////}
 }

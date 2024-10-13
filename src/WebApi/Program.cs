@@ -7,6 +7,7 @@ builder.Host.BuildConfiguration();
 builder.Host.SetupContainer();
 
 builder.Services.ConfigureServices();
+builder.AddOpenTelemetry();
 
 var app = builder.Build();
 
