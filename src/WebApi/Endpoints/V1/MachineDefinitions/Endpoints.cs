@@ -14,15 +14,13 @@ public static class Endpoints
     public const string GetMachineEndpointName = "V1_MachineDefinitions_Get";
 
     public static async Task<IResult> CreateAsync(
+        CreateInput payload,
         LinkGenerator linkGenerator,
         IMachineDefinitionsService machineDefinitionsService,
-        Metrics metrics,
-        Activities activities,
-        CreateInput payload,
         CancellationToken cancellationToken)
     {
-        using var _ = metrics.MeasureMachineCreationDuration();
-        using var __ = activities.StartMachineCreation(payload.Code);
+        using var _ = machineDefinitionsService.Metrics.MeasureMachineCreationDuration();
+        using var __ = machineDefinitionsService.Activities.StartMachineCreation(payload.Code);
         var output = await machineDefinitionsService.CreateAsync(
             payload,
             cancellationToken)
@@ -36,12 +34,10 @@ public static class Endpoints
     public static async Task<IResult> GetAsync(
         string code,
         IMachineDefinitionsService machineDefinitionsService,
-        Metrics metrics,
-        Activities activities,
         CancellationToken cancellationToken)
     {
-        using var _ = metrics.MeasureMachineRetrievalDuration();
-        using var __ = activities.StartMachineRetrieval(code);
+        using var _ = machineDefinitionsService.Metrics.MeasureMachineRetrievalDuration();
+        using var __ = machineDefinitionsService.Activities.StartMachineRetrieval(code);
         var result = await machineDefinitionsService.GetAsync(code, cancellationToken)
             .ConfigureAwait(false);
         return result.Match(

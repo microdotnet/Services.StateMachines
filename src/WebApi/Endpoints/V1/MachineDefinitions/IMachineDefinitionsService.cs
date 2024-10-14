@@ -8,6 +8,10 @@ using OneOf.Types;
 
 public interface IMachineDefinitionsService
 {
+    Activities Activities { get; }
+
+    Metrics Metrics { get; }
+
     Task<CreateOutput> CreateAsync(CreateInput input, CancellationToken cancellationToken);
 
     Task<OneOf<GetOutput, NotFound>> GetAsync(string code, CancellationToken cancellationToken);

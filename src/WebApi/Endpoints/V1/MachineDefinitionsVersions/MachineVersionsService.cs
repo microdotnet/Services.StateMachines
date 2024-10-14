@@ -12,7 +12,6 @@ using OneOf.Types;
 
 public class MachineVersionsService : IMachineVersionsService
 {
-
     private readonly IAggregatesRepository<MachineDetailsAggregateRoot> machinesDetailsReposiory;
 
     private readonly IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository;

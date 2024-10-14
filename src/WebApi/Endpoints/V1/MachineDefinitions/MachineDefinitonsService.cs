@@ -11,10 +11,18 @@ public sealed class MachineDefinitonsService : IMachineDefinitionsService
     private readonly IAggregatesRepository<MachineDetailsAggregateRoot> aggregatesRepository;
 
     public MachineDefinitonsService(
+        Activities activities,
+        Metrics metrics,
         IAggregatesRepository<MachineDetailsAggregateRoot> aggregatesRepository)
     {
+        this.Activities = activities ?? throw new ArgumentNullException(nameof(activities));
+        this.Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         this.aggregatesRepository = aggregatesRepository;
     }
+
+    public Activities Activities { get; }
+
+    public Metrics Metrics { get; }
 
     public async Task<CreateOutput> CreateAsync(
         CreateInput input,
