@@ -10,6 +10,8 @@ public sealed class EventStoreActivities
 
     private const string AddAggregate = nameof(AddAggregate);
 
+    private const string FindAggregate = nameof(FindAggregate);
+
     private readonly ActivitySource activitySource;
 
     public EventStoreActivities()
@@ -30,6 +32,20 @@ public sealed class EventStoreActivities
 
         activity.SetTag("AggregateType", typeof(TAggregate).FullName);
         activity.SetTag("AggregateId", aggregate.PublicIdentifier);
+        return activity;
+    }
+
+    public Activity? StartFindingAggregate(
+        string publicIdentifier)
+    {
+        var activity = this.activitySource.StartActivity(
+            FindAggregate);
+        if (activity is null)
+        {
+            return activity;
+        }
+
+        activity.SetTag("PublicIdentifier", publicIdentifier);
         return activity;
     }
 }

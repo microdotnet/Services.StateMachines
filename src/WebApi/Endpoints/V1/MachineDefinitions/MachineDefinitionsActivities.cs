@@ -8,6 +8,8 @@ public sealed class MachineDefinitionsActivities
 
     private const string MachineCreation = nameof(MachineCreation);
 
+    private const string MachineRetrieval = nameof(MachineRetrieval);
+
     private readonly ActivitySource activitySource;
 
     public MachineDefinitionsActivities()
@@ -15,8 +17,27 @@ public sealed class MachineDefinitionsActivities
         this.activitySource = new ActivitySource(ActivityName);
     }
 
-    public Activity? StartMachineCreation()
+    public Activity? StartMachineCreation(string code)
     {
-        return this.activitySource.StartActivity(MachineCreation);
+        var result = this.activitySource.StartActivity(MachineCreation);
+        if (result is null)
+        {
+            return null;
+        }
+
+        result.SetTag("MachineCode", code);
+        return result;
+    }
+
+    public Activity? StartMachineRetrieval(string code)
+    {
+        var result = this.activitySource.StartActivity(MachineRetrieval);
+        if (result is null)
+        {
+            return null;
+        }
+
+        result.SetTag("MachineCode", code);
+        return result;
     }
 }

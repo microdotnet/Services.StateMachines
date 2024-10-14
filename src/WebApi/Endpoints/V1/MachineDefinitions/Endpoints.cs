@@ -22,28 +22,31 @@ public static class Endpoints
         CancellationToken cancellationToken)
     {
         using var _ = metrics.MeasureMachineCreationDuration();
-        using var __ = activities.StartMachineCreation();
-        try
-        {
-            var output = await machineDefinitionsService.CreateAsync(
-                payload,
-                cancellationToken)
-                .ConfigureAwait(false);
-            var link = linkGenerator.GetPathByName(
-                GetMachineEndpointName,
-                values: new { code = payload.Code });
-            return Results.Created(link, output);
-        }
-        finally
-        {
-            metrics.IncreaseMachineCreationCount();
-        }
+        using var __ = activities.StartMachineCreation(payload.Code);
+        var output = await machineDefinitionsService.CreateAsync(
+            payload,
+            cancellationToken)
+            .ConfigureAwait(false);
+        var link = linkGenerator.GetPathByName(
+            GetMachineEndpointName,
+            values: new { code = payload.Code });
+        return Results.Created(link, output);
     }
 
-    public static IResult Get(
-        string code)
+    public static async Task<IResult> GetAsync(
+        string code,
+        IMachineDefinitionsService machineDefinitionsService,
+        MachineDefinitionsMetrics metrics,
+        MachineDefinitionsActivities activities,
+        CancellationToken cancellationToken)
     {
-        return Results.Problem();
+        using var _ = metrics.MeasureMachineRetrievalDuration();
+        using var __ = activities.StartMachineRetrieval(code);
+        var result = await machineDefinitionsService.GetAsync(code, cancellationToken)
+            .ConfigureAwait(false);
+        return result.Match(
+            o => Results.Ok(o),
+            _ => Results.NotFound());
     }
 
     public static void MapEndpoints(WebApplication app)
@@ -51,7 +54,7 @@ public static class Endpoints
         app.MapPost("/v1/machineDefinitions", CreateAsync)
             .WithName(CreateMachineEndpointName)
             .WithOpenApi();
-        app.MapGet("/v1/machineDefinitions/{code}", Get)
+        app.MapGet("/v1/machineDefinitions/{code}", GetAsync)
             .WithName(GetMachineEndpointName)
             .WithOpenApi();
     }

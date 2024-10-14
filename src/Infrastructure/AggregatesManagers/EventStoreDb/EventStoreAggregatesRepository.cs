@@ -60,6 +60,7 @@ public sealed class EventStoreAggregatesRepository<TAggregate> : IAggregatesRepo
 
     public async Task<TAggregate?> FindAsync(string publicIdentifier, CancellationToken cancellationToken)
     {
+        using var _ = this.activities.StartFindingAggregate(publicIdentifier);
         return await this.Client.AggregateStream<TAggregate>(
             publicIdentifier,
             null,

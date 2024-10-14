@@ -6,29 +6,31 @@ public sealed class MachineDefinitionsMetrics
 {
     public const string MeterName = "MicroDotNet.StateMachines.Api.MachineDefintitions";
 
-    private readonly Counter<int> machineCreationCounter;
-
     private readonly Histogram<double> machineCreationDuration;
+
+    private readonly Histogram<double> machineRetrievalDuration;
 
     public MachineDefinitionsMetrics(IMeterFactory meterFactory)
     {
         var meter = meterFactory.Create(MeterName);
-        this.machineCreationCounter = meter.CreateCounter<int>(
-            $"{MeterName.ToLower()}.create.count");
 
         this.machineCreationDuration = meter.CreateHistogram<double>(
             $"{MeterName.ToLower()}.create.duration",
             "ms");
-    }
 
-    public void IncreaseMachineCreationCount()
-    {
-        this.machineCreationCounter.Add(1);
+        this.machineRetrievalDuration = meter.CreateHistogram<double>(
+            $"{MeterName.ToLower()}.get.duration",
+            "ms");
     }
 
     public TrackedRequestDuration MeasureMachineCreationDuration()
     {
         return new TrackedRequestDuration(this.machineCreationDuration);
+    }
+
+    public TrackedRequestDuration MeasureMachineRetrievalDuration()
+    {
+        return new TrackedRequestDuration(this.machineRetrievalDuration);
     }
 
     public class TrackedRequestDuration : IDisposable

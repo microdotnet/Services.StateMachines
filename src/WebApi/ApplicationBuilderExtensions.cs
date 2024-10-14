@@ -2,6 +2,8 @@
 
 using Autofac.Extensions.DependencyInjection;
 
+using EventStore.Client.Extensions.OpenTelemetry;
+
 using MicroDotNet.Services.StateMachines.Application.EventsMaterialization.EventHandlers;
 using MicroDotNet.Services.StateMachines.Infrastructure.AggregatesManagers.EventStoreDb;
 using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
@@ -69,6 +71,7 @@ public static class ApplicationBuilderExtensions
             .WithTracing(tracing =>
                 tracing
                     .AddAspNetCoreInstrumentation()
+                    .AddEventStoreClientInstrumentation()
                     .AddEndpointsTraces()
                     .AddEventStoreDbTraces()
                     .AddOtlpExporter())
