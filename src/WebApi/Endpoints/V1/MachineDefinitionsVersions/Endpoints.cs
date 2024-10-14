@@ -4,8 +4,6 @@ using MicroDotNet.Services.StateMachines.Application.AggregatesManager;
 using MicroDotNet.Services.StateMachines.Domain.MachineDetails;
 using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
 
-using Microsoft.AspNetCore.Http.HttpResults;
-
 public static class Endpoints
 {
     public const string CreateMachineVersionEndpointName = "V1_MachineDefinitions_Versions_Create";
@@ -14,93 +12,73 @@ public static class Endpoints
 
     public const string AcceptMachineVersionEndpointName = "V1_MachineDefinitions_Versions_Accept";
 
-    public static async Task<IResult> Create(
+    public static async Task<IResult> CreateAsync(
+        string code,
         LinkGenerator linkGenerator,
-        IAggregatesRepository<MachineDetailsAggregateRoot> machinesDetailsReposiory,
-        IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository,
-        string code)
+        IMachineVersionsService machineVersionsService,
+        CancellationToken cancellationToken)
     {
-        var machine = await machinesDetailsReposiory.FindAsync(
-            MachineDetailsAggregateRoot.CreatePublicIdentifier(code),
-            CancellationToken.None);
-        if (machine is null)
-        {
-            return Results.NotFound();
-        }
-
-
-        short newVersion = machine.AddNewVersion();
-        var machineDefinition = MachineDefinitionAggregateRoot.Create(Domain.MachineName.Create(machine.Code, newVersion));
-        await machineDefinitionsRepository.AddAsync(machineDefinition, CancellationToken.None);
-        await machinesDetailsReposiory.UpdateAsync(machine, machine.Version, CancellationToken.None);
-        var output = new CreateOutput(machineDefinition.MachineName.Version);
-        var link = linkGenerator.GetPathByName(
-            GetMachineVersionEndpointName,
-            values: new { code, version = output.Version });
-        return Results.Created(link, output);
+        using var _ = machineVersionsService.Metrics.MeasureVersionCreationDuration();
+        using var __ = machineVersionsService.Activities.StartVersionCreation(code);
+        var output = await machineVersionsService.CreateAsync(
+            code,
+            cancellationToken)
+            .ConfigureAwait(false);
+        return output.Match(
+            o =>
+            {
+                var link = linkGenerator.GetPathByName(
+                    GetMachineVersionEndpointName,
+                    values: new { code, version = o.Version });
+                return Results.Created(link, o);
+            },
+            _ => Results.NotFound());
     }
 
-    public static async Task<IResult> Get(
+    public static async Task<IResult> GetAsync(
         string code,
         short version,
-        IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
+        IMachineVersionsService machineVersionsService,
+        CancellationToken cancellationToken)
     {
-        var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
-        var machine = await machineDefinitionsRepository.FindAsync(
-            publicIdentifier,
-            CancellationToken.None);
-
-        if (machine is null)
-        {
-            return Results.NotFound();
-        }
-
-        var result = new GetOutput(
-            machine.MachineName.Code,
-            machine.MachineName.Version,
-            machine.Status.Code,
-            machine.Nodes.Select(n => new GetOutput.Node(n.Name)).ToList(),
-            machine.Transitions.Select(t => new GetOutput.Transition((string)t.Source, (string)t.Target, t.Trigger)).ToList());
-        return Results.Ok(result);
+        using var _ = machineVersionsService.Metrics.MeasureVersionRetrievalDuration();
+        using var __ = machineVersionsService.Activities.StartVersionRetrieval(code, version);
+        var output = await machineVersionsService.GetAsync(
+            new(code, version),
+            cancellationToken)
+            .ConfigureAwait(false);
+        return output.Match(
+            o => Results.Ok(o),
+            _ => Results.NotFound());
     }
 
-    public static async Task<IResult> Accept(
+    public static async Task<IResult> AcceptAsync(
         string code,
         short version,
-        IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
+        IMachineVersionsService machineVersionsService,
+        CancellationToken cancellationToken)
     {
-        var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
-        var machine = await machineDefinitionsRepository.FindAsync(
-            publicIdentifier,
-            CancellationToken.None);
-
-        if (machine is null)
-        {
-            return Results.NotFound();
-        }
-
-        if (machine.Status != Status.InDesign)
-        {
-            return Results.UnprocessableEntity();
-        }
-
-        machine.Confirm();
-        await machineDefinitionsRepository.UpdateAsync(
-            machine,
-            machine.Version,
-            CancellationToken.None);
-        return Results.Ok();
+        using var _ = machineVersionsService.Metrics.MeasureVersionAcceptationDuration();
+        using var __ = machineVersionsService.Activities.StartVersionAcceptation(code, version);
+        var output = await machineVersionsService.AcceptAsync(
+            new(code, version),
+            cancellationToken)
+            .ConfigureAwait(false);
+        return output.Match(
+            o => Results.Ok(o),
+            _ => Results.NotFound(),
+            _ => Results.UnprocessableEntity());
     }
 
     public static void MapEndpoints(WebApplication app)
     {
-        app.MapPost("/v1/machineDefinitions/{code}/versions", Create)
+        app.MapPost("/v1/machineDefinitions/{code}/versions", CreateAsync)
             .WithName(CreateMachineVersionEndpointName)
             .WithOpenApi();
-        app.MapGet("/v1/machineDefinitions/{code}/versions/{version}", Get)
+        app.MapGet("/v1/machineDefinitions/{code}/versions/{version}", GetAsync)
             .WithName(GetMachineVersionEndpointName)
             .WithOpenApi();
-        app.MapPost("/v1/machineDefinitions/{code}/versions/{version}/accept", Accept)
+        app.MapPost("/v1/machineDefinitions/{code}/versions/{version}/accept", AcceptAsync)
             .WithName(AcceptMachineVersionEndpointName)
             .WithOpenApi();
     }

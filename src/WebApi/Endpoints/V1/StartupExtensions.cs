@@ -1,5 +1,8 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1;
 
+using MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitions;
+using MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitionsVersions;
+
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
@@ -8,9 +11,8 @@ public static class StartupExtensions
     public static IServiceCollection AddV1EndpointsRegistrations(
         this IServiceCollection services)
     {
-        services.AddScoped<MachineDefinitions.IMachineDefinitionsService, MachineDefinitions.MachineDefinitonsService>();
-        services.AddSingleton<MachineDefinitions.MachineDefinitionsMetrics>();
-        services.AddSingleton<MachineDefinitions.MachineDefinitionsActivities>();
+        services.AddMachineDefinitionsEndpointsRegistrations();
+        services.AddMachineDefinitionsVersionsEndpointsRegistrations();
         return services;
     }
 
@@ -18,7 +20,8 @@ public static class StartupExtensions
         this TracerProviderBuilder builder)
     {
         builder
-            .AddSource(MachineDefinitions.MachineDefinitionsActivities.ActivityName);
+            .AddMachineDefinitionsTraces()
+            .AddMachineDefinitionsVersionsTraces();
         return builder;
     }
 
@@ -26,7 +29,8 @@ public static class StartupExtensions
         this MeterProviderBuilder builder)
     {
         builder
-            .AddMeter(MachineDefinitions.MachineDefinitionsMetrics.MeterName);
+            .AddMachineDefinitionsMeters()
+            .AddMachineDefinitionsVersionsMeters();
         return builder;
     }
 }

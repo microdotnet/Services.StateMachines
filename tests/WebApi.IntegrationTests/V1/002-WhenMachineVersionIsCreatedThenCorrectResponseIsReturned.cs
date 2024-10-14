@@ -16,12 +16,9 @@ partial class Tests
 
         await this.client.SendAsync(createMachineRequest, CancellationToken.None);
 
-        var createVersionPayload = CreateMachineDefinitionVersionCreationPayload();
         var createVersionRequest = new HttpRequestMessage(
             HttpMethod.Post,
             $"/v1/machineDefinitions/{createMachinePayload.Code}/versions");
-        var createVersionContent = CreateJsonContent(createVersionPayload);
-        createVersionRequest.Content = createVersionContent;
         var createVersionResponse = await this.client.SendAsync(createVersionRequest, CancellationToken.None);
         createVersionResponse.IsSuccessStatusCode.Should().BeTrue($"Expected success status, but '{createVersionResponse.StatusCode}' was found.");
 
@@ -31,10 +28,5 @@ partial class Tests
         headerValues.Should().HaveCount(1);
         var location = headerValues[0];
         location.Should().Contain(createMachinePayload.Code);
-    }
-
-    private static MachineDefinitionVersions.CreateInput CreateMachineDefinitionVersionCreationPayload()
-    {
-        return new MachineDefinitionVersions.CreateInput();
     }
 }

@@ -6,7 +6,7 @@ using MicroDotNet.Services.StateMachines.Domain;
 
 public sealed class EventStoreActivities
 {
-    public const string ActivityName = "MicroDotNet.StateMachines.EventStore.AggregatesRepository";
+    public const string ActivityName = "StateMachines.EventStore.AggregatesRepository";
 
     private const string AddAggregate = nameof(AddAggregate);
 

@@ -32,7 +32,7 @@ public sealed class CustomWebApplicationFactory<TProgram> : WebApplicationFactor
             var configuration = new Dictionary<string, string?>()
             {
                 ["ConnectionStrings:EventsDB"] = this.eventStoreDb.ConnectionString,
-                ["ConnectionStrings:WriteDB"] = this.mongoDb.ConnectionString,
+                ["ConnectionStrings:ReadDB"] = this.mongoDb.ConnectionString,
             };
             bld.AddInMemoryCollection(configuration);
         });

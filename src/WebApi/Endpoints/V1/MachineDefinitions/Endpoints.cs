@@ -16,8 +16,8 @@ public static class Endpoints
     public static async Task<IResult> CreateAsync(
         LinkGenerator linkGenerator,
         IMachineDefinitionsService machineDefinitionsService,
-        MachineDefinitionsMetrics metrics,
-        MachineDefinitionsActivities activities,
+        Metrics metrics,
+        Activities activities,
         CreateInput payload,
         CancellationToken cancellationToken)
     {
@@ -36,8 +36,8 @@ public static class Endpoints
     public static async Task<IResult> GetAsync(
         string code,
         IMachineDefinitionsService machineDefinitionsService,
-        MachineDefinitionsMetrics metrics,
-        MachineDefinitionsActivities activities,
+        Metrics metrics,
+        Activities activities,
         CancellationToken cancellationToken)
     {
         using var _ = metrics.MeasureMachineRetrievalDuration();

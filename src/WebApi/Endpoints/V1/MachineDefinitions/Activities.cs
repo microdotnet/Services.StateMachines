@@ -2,9 +2,9 @@
 
 using System.Diagnostics;
 
-public sealed class MachineDefinitionsActivities
+public sealed class Activities
 {
-    public const string ActivityName = "MicroDotNet.StateMachines.Api.MachineDefintitions";
+    public const string ActivityName = "StateMachines.Api.MachineDefinitions";
 
     private const string MachineCreation = nameof(MachineCreation);
 
@@ -12,7 +12,7 @@ public sealed class MachineDefinitionsActivities
 
     private readonly ActivitySource activitySource;
 
-    public MachineDefinitionsActivities()
+    public Activities()
     {
         this.activitySource = new ActivitySource(ActivityName);
     }

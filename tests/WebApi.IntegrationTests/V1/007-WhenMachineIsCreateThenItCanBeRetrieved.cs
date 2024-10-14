@@ -18,12 +18,9 @@ partial class Tests
 
         await this.client.SendAsync(createMachineRequest, CancellationToken.None);
 
-        var createVersionPayload = CreateMachineDefinitionVersionCreationPayload();
         var createVersionRequest = new HttpRequestMessage(
             HttpMethod.Post,
             $"/v1/machineDefinitions/{createMachinePayload.Code}/versions");
-        var createVersionContent = CreateJsonContent(createVersionPayload);
-        createVersionRequest.Content = createVersionContent;
         var createVersionResponse = await this.client.SendAsync(createVersionRequest, CancellationToken.None);
         var headerValues = createVersionResponse.Headers.GetValues("Location")
             .ToList();

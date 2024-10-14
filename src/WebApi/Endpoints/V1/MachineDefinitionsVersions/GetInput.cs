@@ -1,3 +1,5 @@
 ﻿namespace MicroDotNet.Services.StateMachines.WebApi.Endpoints.V1.MachineDefinitionsVersions;
 
-public record CreateInput;
+public record GetInput(
+    string Code,
+    short Version);

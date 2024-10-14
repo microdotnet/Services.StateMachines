@@ -2,15 +2,15 @@
 
 using System.Diagnostics.Metrics;
 
-public sealed class MachineDefinitionsMetrics
+public sealed class Metrics
 {
-    public const string MeterName = "MicroDotNet.StateMachines.Api.MachineDefintitions";
+    public const string MeterName = "StateMachines.Api.MachineDefinitions";
 
     private readonly Histogram<double> machineCreationDuration;
 
     private readonly Histogram<double> machineRetrievalDuration;
 
-    public MachineDefinitionsMetrics(IMeterFactory meterFactory)
+    public Metrics(IMeterFactory meterFactory)
     {
         var meter = meterFactory.Create(MeterName);
 
