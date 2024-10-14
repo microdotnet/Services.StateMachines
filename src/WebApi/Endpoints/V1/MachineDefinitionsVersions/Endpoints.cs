@@ -15,7 +15,7 @@ public static class Endpoints
     public static async Task<IResult> CreateAsync(
         string code,
         LinkGenerator linkGenerator,
-        IMachineVersionsService machineVersionsService,
+        IVersionsService machineVersionsService,
         CancellationToken cancellationToken)
     {
         using var _ = machineVersionsService.Metrics.MeasureVersionCreationDuration();
@@ -38,7 +38,7 @@ public static class Endpoints
     public static async Task<IResult> GetAsync(
         string code,
         short version,
-        IMachineVersionsService machineVersionsService,
+        IVersionsService machineVersionsService,
         CancellationToken cancellationToken)
     {
         using var _ = machineVersionsService.Metrics.MeasureVersionRetrievalDuration();
@@ -55,7 +55,7 @@ public static class Endpoints
     public static async Task<IResult> AcceptAsync(
         string code,
         short version,
-        IMachineVersionsService machineVersionsService,
+        IVersionsService machineVersionsService,
         CancellationToken cancellationToken)
     {
         using var _ = machineVersionsService.Metrics.MeasureVersionAcceptationDuration();

@@ -10,13 +10,13 @@ using MicroDotNet.Services.StateMachines.Domain.MachineStructure;
 using OneOf;
 using OneOf.Types;
 
-public class MachineVersionsService : IMachineVersionsService
+public class VersionsService : IVersionsService
 {
     private readonly IAggregatesRepository<MachineDetailsAggregateRoot> machinesDetailsReposiory;
 
     private readonly IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository;
 
-    public MachineVersionsService(
+    public VersionsService(
         Activities activities,
         Metrics metrics,
         IAggregatesRepository<MachineDetailsAggregateRoot> machinesDetailsReposiory,

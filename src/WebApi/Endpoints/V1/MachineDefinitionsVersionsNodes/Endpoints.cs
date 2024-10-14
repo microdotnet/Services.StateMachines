@@ -9,44 +9,31 @@ public static class Endpoints
 {
     private const string AddNodesEndpointName = "V1_MachineDefinitions_Versions_Nodes_Add";
 
-    public static async Task<IResult> AddNodes(
+    public static async Task<IResult> AddNodesAsync(
         string code,
         short version,
         AddNodesInput input,
-        IAggregatesRepository<MachineDefinitionAggregateRoot> machineDefinitionsRepository)
+        INodesService nodesService,
+        CancellationToken cancellationToken)
     {
-        var publicIdentifier = MachineDefinitionAggregateRoot.CreatePublicIdentifier(code, version);
-        var machine = await machineDefinitionsRepository.FindAsync(
-            publicIdentifier,
-            CancellationToken.None);
+        var _ = nodesService.Metrics.MeasureNodesAddingDuration();
+        var __ = nodesService.Activities.StartAddingNodes(code, version, input?.Nodes?.Count ?? 0);
+        var output = await nodesService.AddNodesAsync(
+            code,
+            version,
+            input,
+            cancellationToken)
+            .ConfigureAwait(false);
 
-        if (machine is null)
-        {
-            return Results.NotFound();
-        }
-
-        if (machine.Status != Status.InDesign)
-        {
-            return Results.UnprocessableEntity();
-        }
-
-        var nodes = new Collection<Node>();
-        foreach (var item in input.Nodes)
-        {
-            nodes.Add(Node.Create(item.Name));
-        }
-
-        machine.AddNodes([.. nodes]);
-        await machineDefinitionsRepository.UpdateAsync(
-            machine,
-            machine.Version,
-            CancellationToken.None);
-        return Results.Ok();
+        return output.Match(
+            o => Results.Ok(o),
+            _ => Results.NotFound(),
+            _ => Results.UnprocessableEntity());
     }
 
     public static void MapEndpoints(WebApplication app)
     {
-        app.MapPost("/v1/machineDefinitions/{code}/versions/{version}/nodes", AddNodes)
+        app.MapPost("/v1/machineDefinitions/{code}/versions/{version}/nodes", AddNodesAsync)
             .WithName(AddNodesEndpointName)
             .WithOpenApi();
     }

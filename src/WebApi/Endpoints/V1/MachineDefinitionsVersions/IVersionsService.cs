@@ -3,7 +3,7 @@
 using OneOf;
 using OneOf.Types;
 
-public interface IMachineVersionsService
+public interface IVersionsService
 {
     Activities Activities { get; }
 
