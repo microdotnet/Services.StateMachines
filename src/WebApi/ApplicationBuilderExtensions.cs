@@ -7,6 +7,7 @@ using EventStore.Client.Extensions.OpenTelemetry;
 using MicroDotNet.Services.StateMachines.Application.EventsMaterialization.EventHandlers;
 using MicroDotNet.Services.StateMachines.Infrastructure.AggregatesManagers.EventStoreDb;
 using MicroDotNet.Services.StateMachines.WebApi.Endpoints;
+using MicroDotNet.Services.StateMachines.WebApi.OtelHelpers;
 
 using Microsoft.Extensions.Hosting;
 
@@ -60,14 +61,12 @@ public static class ApplicationBuilderExtensions
         builder.Logging.AddOpenTelemetry(options =>
         {
             options
-                .SetResourceBuilder(
-                    ResourceBuilder.CreateDefault()
-                        .AddService(ServiceName))
+                .SetResourceBuilder(ConfigureResourceBuilder(ResourceBuilder.CreateDefault()))
                 .AddOtlpExporter();
         });
 
         builder.Services.AddOpenTelemetry()
-            .ConfigureResource(resource => resource.AddService(ServiceName))
+            .ConfigureResource(resourceBuilder => ConfigureResourceBuilder(resourceBuilder))
             .WithTracing(tracing =>
                 tracing
                     .AddAspNetCoreInstrumentation()
@@ -92,6 +91,7 @@ public static class ApplicationBuilderExtensions
         services.AddMetrics();
         services.StoreMachinesInEventStoreDb();
         services.AddEndpointsRegistrations();
+        services.AddOtelHelpers();
     }
 
     public static void ConfigureApplication(this WebApplication app)
@@ -105,5 +105,14 @@ public static class ApplicationBuilderExtensions
         app.MapSwagger();
         ////app.UseOpenTelemetryPrometheusScrapingEndpoint();
         app.MapEndpoints();
+    }
+
+    private static ResourceBuilder ConfigureResourceBuilder(ResourceBuilder resourceBuilder)
+    {
+        resourceBuilder
+            .AddService(ServiceName)
+            .AddEnvironmentVariableDetector()
+            .AddDetector(sp => sp.GetService<EnvironmentDetector>()!);
+        return resourceBuilder;
     }
 }

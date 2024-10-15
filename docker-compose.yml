@@ -72,6 +72,7 @@ services:
             - ASPNETCORE_URLS=http://+:80
             - OTEL_EXPORTER_OTLP_ENDPOINT=http://local.microdotnet.monitoring.otelcollector:4317
             - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+            - ASPNETCORE_ENVIRONMENT=LocalDocker
             - ConnectionStrings__EventsDB=esdb://local.microdotnet.services.statemachines.eventstore:2113/?tls=false
             - ConnectionStrings__ReadDB=mongodb://root:password@local.microdotnet.services.statemachines.mongo:27017
         networks:
